@@ -2,12 +2,23 @@
 <html>
   <head>
     <title>Buffer Web</title>
+    <script type='text/javascript'>
+      (function() {
+          var trial = document.createElement('script');
+          trial.type = 'text/javascript';
+          trial.async = true;
+          trial.src = 'https://easy.myfonts.net/v2/js?sid=218671(font-family=Neue+Haas+Grotesk+Pro+Text+55+Roman)&sid=218673(font-family=Neue+Haas+Grotesk+Pro+Text+65+Medium)&sid=218675(font-family=Neue+Haas+Grotesk+Pro+Text+75+Bold)&sid=218681(font-family=Neue+Haas+Grotesk+Pro+Display+35+ExtraLight)&key=znavs1reTp';
+          var head = document.getElementsByTagName('head')[0];
+          head.appendChild(trial);
+      })();
+    </script>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
     <link href="//icons.buffer.com/0.16.4/buffer-icons.css" rel="stylesheet" type="text/css"/>
     <style>
       html, body, #root {
         height: 100%;
         margin: 0;
+        font-family: 'Neue Haas Grotesk Pro Text 65 Medium';
       }
       ::-webkit-scrollbar {
          width: 5px;

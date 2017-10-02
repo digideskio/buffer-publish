@@ -20,7 +20,6 @@ import colors from '../style/color';
 const Text = ({ children, size, weight, color }) => {
   const style = calculateStyles({
     default: {
-      fontFamily,
       fontSize,
       fontWeight,
       color: colors[color],

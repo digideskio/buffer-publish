@@ -1,4 +1,4 @@
-export const fontFamily = '"Open Sans", sans-serif';
+export const fontFamily = 'Neue Haas Grotesk Pro Display 35 ExtraLight';
 
 export const fontSize = '1rem';
 export const fontSizeLarge = '1.25rem';

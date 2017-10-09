@@ -38,7 +38,7 @@ spec:
           protocol: TCP
         env:
         - name: SESSION_SVC_HOST
-          value: session-service-1
+          value: session-service-1.buffer
         - name: CLIENT_ID
           valueFrom:
             secretKeyRef:

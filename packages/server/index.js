@@ -5,6 +5,7 @@ const bugsnag = require('bugsnag');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const forceSSL = require('express-force-ssl');
 const { join } = require('path');
 const shutdownHelper = require('@bufferapp/shutdown-helper');
 const { apiError } = require('./middleware');
@@ -92,6 +93,7 @@ app.get('*', (req, res) => {
   }
 });
 
+app.use(forceSSL);
 app.use(apiError);
 
 server.listen(80, () => console.log('listening on port 80')); // eslint-disable-line

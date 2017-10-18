@@ -15,6 +15,9 @@ const rpc = require('./rpc');
 const pusher = require('./lib/pusher');
 
 const app = express();
+app.set('forceSSLOptions', {
+  trustXFPHeader: true,
+});
 const server = http.createServer(app);
 
 let staticAssets = {
@@ -58,6 +61,7 @@ const getHtml = () => fs.readFileSync(join(__dirname, 'index.html'), 'utf8')
                                     .replace('{{{bugsnagScript}}}', bugsnagScript);
 
 app.use(logMiddleware({ name: 'BufferPublish' }));
+app.use(forceSSL);
 app.use(cookieParser());
 
 // All routes after this have access to the user session
@@ -93,7 +97,6 @@ app.get('*', (req, res) => {
   }
 });
 
-app.use(forceSSL);
 app.use(apiError);
 
 server.listen(80, () => console.log('listening on port 80')); // eslint-disable-line

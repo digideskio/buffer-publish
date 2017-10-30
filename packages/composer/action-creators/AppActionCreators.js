@@ -50,10 +50,13 @@ const AppActionCreators = {
   ) => {
     const { isSavingPossible } = AppStore.getAppState();
     const { shouldAlwaysSkipEmptyTextAlert } = AppStore.getUserData();
+    const { updateId } = AppStore.getMetaData();
+    const isEditingUpdate = updateId !== null;
 
     if (!isSavingPossible) return;
 
     const shouldShowEmptyTextAlert = (
+      !isEditingUpdate &&
       !shouldAlwaysSkipEmptyTextAlert &&
       !shouldSkipEmptyTextAlert &&
       AppStore.hasFBDraftWithNoText()

@@ -9,6 +9,7 @@ const ComposerWrapper = ({
   profiles,
   enabledApplicationModes,
   onSave,
+  preserveStateOnClose,
   environment,
   editMode,
   post,
@@ -20,6 +21,7 @@ const ComposerWrapper = ({
     saveButtons,
     position: { top: '10rem', left: '10rem' },
     onSave,
+    preserveStateOnClose,
   };
 
   const metaData = {
@@ -78,6 +80,7 @@ ComposerWrapper.propTypes = {
   profiles: PropTypes.arrayOf(PropTypes.object),
   enabledApplicationModes: PropTypes.arrayOf(PropTypes.string),
   onSave: PropTypes.func.isRequired,
+  preserveStateOnClose: PropTypes.bool.isRequired,
   environment: PropTypes.string.isRequired,
   editMode: PropTypes.bool.isRequired,
   post: PropTypes.shape({}),

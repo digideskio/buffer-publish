@@ -152,6 +152,7 @@ class App extends React.Component {
 
     options: PropTypes.shape({
       canSelectProfiles: PropTypes.bool.isRequired,
+      preserveStateOnClose: PropTypes.bool.isRequired,
       saveButtons: PropTypes.arrayOf(
         PropTypes.oneOf(Object.keys(SaveButtonTypes))
       ).isRequired,
@@ -182,7 +183,6 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    AppActionCreators.resetData();
     AppStore.addChangeListener(this.onStoreChange);
     NotificationStore.addChangeListener(this.onStoreChange);
     /* prevent drop/dragover behavior when dropping a file not in the dropzone*/
@@ -225,6 +225,10 @@ class App extends React.Component {
     window.removeEventListener('dragover', (e) => e.preventDefault());
 
     if (this.dragMe) this.dragMe.cleanup();
+
+    if (!this.props.options.preserveStateOnClose) {
+      AppInitActionCreators.resetData();
+    }
   }
 
   onStoreChange = () => this.setState(getState());
@@ -252,6 +256,23 @@ class App extends React.Component {
 
   onCloseButtonClick = () => AppActionCreators.closeComposer();
 
+  /**
+   * options.preserveStateOnClose is used to reset the composer's state on close.
+   * However, if options.preserveStateOnClose is true in a previous composer instance,
+   * since this is a singleton, we'll need to reset the composer's state on load
+   * if the new instance has `options.preserveStateOnClose === false`
+   */
+  resetStateIfNecessary = (() => {
+    let prevPreserveStateOnClose = false;
+
+    return ({ preserveStateOnClose }) => {
+      if (preserveStateOnClose === false && preserveStateOnClose !== prevPreserveStateOnClose) {
+        AppInitActionCreators.resetData();
+      }
+      prevPreserveStateOnClose = preserveStateOnClose;
+    };
+  })();
+
   init = () => {
     const {
       profilesData,
@@ -263,6 +284,8 @@ class App extends React.Component {
       onNewPublish,
     } = this.props;
 
+    this.resetStateIfNecessary(options);
+
     AppInitActionCreators.loadInitialData({
       profilesData,
       userData,
@@ -272,6 +295,7 @@ class App extends React.Component {
       options,
       onNewPublish,
     });
+
     WebSocket.init();
 
     this.isInitialized = true;

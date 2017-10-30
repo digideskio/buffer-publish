@@ -6,6 +6,7 @@ import ComposerWrapper from '../ComposerWrapper';
 const ComposerPopover = ({
   onSave,
   transparentOverlay,
+  preserveComposerStateOnClose,
 }) => (
   <Popover
     left={'21rem'}
@@ -15,6 +16,7 @@ const ComposerPopover = ({
   >
     <ComposerWrapper
       onSave={onSave}
+      preserveStateOnClose={preserveComposerStateOnClose}
     />
   </Popover>
 );
@@ -22,10 +24,12 @@ const ComposerPopover = ({
 ComposerPopover.propTypes = {
   onSave: PropTypes.func.isRequired,
   transparentOverlay: PropTypes.bool,
+  preserveComposerStateOnClose: PropTypes.bool,
 };
 
 ComposerPopover.defaultProps = {
   transparentOverlay: false,
+  preserveComposerStateOnClose: false,
 };
 
 export default ComposerPopover;

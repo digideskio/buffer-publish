@@ -373,12 +373,6 @@ const AppActionCreators = {
       actionType: ActionTypes.APP_LOADED,
     });
   },
-
-  resetData: () => {
-    AppDispatcher.handleViewAction({
-      actionType: ActionTypes.APP_RESET,
-    });
-  },
 };
 
 export default AppActionCreators;

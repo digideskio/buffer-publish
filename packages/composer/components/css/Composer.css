@@ -441,7 +441,6 @@
 
 .editableErrorUpdateZone {
   border: 1px solid var(--error-color-secondary-hue);
-  border-bottom: 0;
 }
 
 .editableErrorUpdateZone:hover {

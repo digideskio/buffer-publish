@@ -332,6 +332,7 @@ const ActionTypes = keyMirror({
   REMOVE_COMPOSER_NOTICES: null,
   COMPOSER_UPDATE_IMAGE_DESCRIPTION: null,
   COMPOSER_UPDATE_UPLOADED_IMAGE_DIMENSIONS: null,
+  COMPOSER_DRAFTS_PREVENT_AUTO_ATTACHING_URLS: null,
 });
 
 const AsyncOperationStates = keyMirror({

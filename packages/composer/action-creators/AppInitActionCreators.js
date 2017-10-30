@@ -179,26 +179,43 @@ const loadInitialMetaData = (metaData) => {
       });
   }
 
-  const initialUrlInText = metaData.text ?
+  const initialUrlsInText = metaData.text ?
     twitterText.extractUrlsWithIndices(metaData.text)
-      .map((urlWithIndices) => urlWithIndices.url)[0] :
+      .map((urlWithIndices) => urlWithIndices.url) :
     null;
-  const initialUrl = metaData.url || initialUrlInText;
+  const initialUrl = metaData.url || (initialUrlsInText && initialUrlsInText[0]);
+
+  // Don't auto-attach link when importing an update to edit that didn't
+  // have a link attached in the first place
+  const isEditingUpdate = metaData.updateId !== null;
+  const preventAutoAttachingLink = (
+    isEditingUpdate &&
+    metaData.linkData === null
+  );
 
   if (initialUrl) {
-    AppDispatcher.handleViewAction({
-      actionType: ActionTypes.COMPOSER_UPDATE_DRAFTS_LINK_DATA,
-      linkData: { url: initialUrl },
-      meta: {
-        isNewLinkAttachment: true,
-        comesFromDirectUserAction: false,
-      },
-    });
+    // If we haven't auto-attached a link on init, also prevent that same link
+    // from expanding automatically later on
+    if (preventAutoAttachingLink) {
+      AppDispatcher.handleViewAction({
+        actionType: ActionTypes.COMPOSER_DRAFTS_PREVENT_AUTO_ATTACHING_URLS,
+        urls: initialUrlsInText,
+      });
+    } else {
+      AppDispatcher.handleViewAction({
+        actionType: ActionTypes.COMPOSER_UPDATE_DRAFTS_LINK_DATA,
+        linkData: { url: initialUrl },
+        meta: {
+          isNewLinkAttachment: true,
+          comesFromDirectUserAction: false,
+        },
+      });
 
-    AppDispatcher.handleViewAction({
-      actionType: ActionTypes.COMPOSER_ENABLE_DRAFTS_ATTACHMENT,
-      type: AttachmentTypes.LINK,
-    });
+      AppDispatcher.handleViewAction({
+        actionType: ActionTypes.COMPOSER_ENABLE_DRAFTS_ATTACHMENT,
+        type: AttachmentTypes.LINK,
+      });
+    }
   }
 
   if (metaData.linkData) {

@@ -1697,6 +1697,10 @@ const onDispatchedPayload = function(payload) {
       state.drafts.forEach((draft) => addDraftVideo(draft.id, video));
       break;
 
+    case ActionTypes.COMPOSER_DRAFTS_PREVENT_AUTO_ATTACHING_URLS:
+      state.drafts.forEach((draft) => { draft.urls = action.urls; });
+      break;
+
     case ActionTypes.APP_RESET:
       state = getInitialState();
       break;

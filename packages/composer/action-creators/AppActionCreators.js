@@ -141,8 +141,8 @@ const AppActionCreators = {
               successfulResponseMessageMap.get(queueingType).plural :
               successfulResponseMessageMap.get(queueingType).singular,
           });
-          AppHooks.handleSavedDrafts();
         }
+
         // Queue individual notifications to let user know of individual
         // error/success states for each composer (we could be even more granular
         // here by, for each composer, singling out profile ids that either succeeded
@@ -180,6 +180,9 @@ const AppActionCreators = {
             message: unsuccessfulResponse.message,
           });
         });
+
+        // Run this at the very end so that we can assume other actions have already propagated
+        if (areAllResponsesSuccessful) AppHooks.handleSavedDrafts();
       });
   },
 

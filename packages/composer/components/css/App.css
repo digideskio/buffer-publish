@@ -20,6 +20,8 @@
   --secondary-bg-hover-color: secondary-bg-hover-color;
   --tooltip-bg-color: tooltip-bg-color;
   --app-close-button-zindex: app-close-button-zindex;
+
+  --app-width: 686px;
 }
 
 /* Note: refactor those global styles when starting to use MC out ot the extension's iframe */
@@ -57,9 +59,9 @@ button:focus:active {
 
 .floatingNotificationsContainer {
   position: absolute;
-  top: 20px;
+  top: -56px;
   left: 50%;
-  width: 100%;
+  width: var(--app-width);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -83,7 +85,7 @@ button:focus:active {
 .app {
   position: relative;
   z-index: 1;
-  width: 686px;
+  width: var(--app-width);
   margin: 100px auto 50px;
   transform: translate(0%, 0%); /* added to fix ie11 issue with react-tooltip */
   border: 1px solid var(--app-border-color);

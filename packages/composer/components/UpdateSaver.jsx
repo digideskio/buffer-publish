@@ -8,7 +8,8 @@ import ReactDOMServer from 'react-dom/server';
 import moment from 'moment-timezone';
 import partition from 'lodash.partition';
 import ComposerActionCreators from '../action-creators/ComposerActionCreators';
-import { QueueingTypes, NotificationScopes, Services, SaveButtonTypes } from '../AppConstants';
+import { QueueingTypes, NotificationScopes, Services, SaveButtonTypes, InlineSaveButtonTypes }
+  from '../AppConstants';
 import Dropdown, { DropdownTrigger, DropdownContent } from '../components/Dropdown';
 import DateTimeSlotPicker from '../components/DateTimeSlotPicker';
 import UpdateSaverItem from '../components/UpdateSaverItem';
@@ -188,10 +189,7 @@ class UpdateSaver extends React.Component {
     );
 
     const [inlineSaveButtonTypes, stackedSaveButtonTypes] =
-      partition(saveButtons, (button) => (
-        button === SaveButtonTypes.SAVE ||
-        button === SaveButtonTypes.SAVE_AND_APPROVE
-      ));
+      partition(saveButtons, (button) => InlineSaveButtonTypes.includes(button));
 
     const displayInlineSaveButtons = inlineSaveButtonTypes.length > 0;
     const displayStackedSaveButtons = stackedSaveButtonTypes.length > 0;

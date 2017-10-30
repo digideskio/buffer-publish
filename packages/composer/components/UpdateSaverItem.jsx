@@ -1,24 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import AppActionCreators from '../action-creators/AppActionCreators';
-import { QueueingTypes, SaveButtonTypes } from '../AppConstants';
+import { SaveButtonTypes, ButtonsQueuingTypesMap } from '../AppConstants';
 import Dropdown, { DropdownTrigger, DropdownContent } from '../components/Dropdown';
 import DateTimeSlotPicker from '../components/DateTimeSlotPicker';
 import Button from '../components/Button';
 
 import styles from './css/UpdateSaver.css';
-
-const buttonsQueuingTypesMap = new Map([
-  [SaveButtonTypes.ADD_TO_QUEUE, QueueingTypes.QUEUE],
-  [SaveButtonTypes.SHARE_NEXT, QueueingTypes.NEXT],
-  [SaveButtonTypes.SHARE_NOW, QueueingTypes.NOW],
-  [SaveButtonTypes.SCHEDULE_POST, QueueingTypes.CUSTOM],
-  [SaveButtonTypes.SAVE, QueueingTypes.SAVE],
-  [SaveButtonTypes.SAVE_AND_APPROVE, QueueingTypes.SAVE_AND_APPROVE],
-  [SaveButtonTypes.ADD_TO_DRAFTS, QueueingTypes.ADD_DRAFT],
-  [SaveButtonTypes.SHARE_NEXT_DRAFT, QueueingTypes.NEXT_DRAFT],
-  [SaveButtonTypes.SCHEDULE_DRAFT, QueueingTypes.CUSTOM_DRAFT],
-]);
 
 class UpdateSaverItem extends React.Component {
   static propTypes = {
@@ -42,7 +30,7 @@ class UpdateSaverItem extends React.Component {
 
   onButtonClick = () => {
     const { type } = this.props;
-    const queuingType = buttonsQueuingTypesMap.get(type);
+    const queuingType = ButtonsQueuingTypesMap.get(type);
 
     AppActionCreators.saveDrafts(queuingType, { shouldSkipEmptyTextAlert: false });
   };
@@ -63,7 +51,7 @@ class UpdateSaverItem extends React.Component {
 
   onDateTimeSlotPickerSubmit = (timestamp) => {
     const { type } = this.props;
-    const queuingType = buttonsQueuingTypesMap.get(type);
+    const queuingType = ButtonsQueuingTypesMap.get(type);
 
     AppActionCreators.saveDrafts(queuingType, {
       customScheduleTime: timestamp,

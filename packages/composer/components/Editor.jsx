@@ -298,7 +298,7 @@ class Editor extends React.Component {
 
     // Save drafts on Ctrl/Cmd + Enter
     if (e.ctrlKey || e.metaKey) {
-      AppActionCreators.saveDrafts(QueueingTypes.QUEUE, { shouldSkipEmptyTextAlert: false });
+      AppActionCreators.saveDrafts(undefined, { shouldSkipEmptyTextAlert: false });
       // TODO: default to whatever firstButtonType is in UpdateSaver.jsx
       return 'handled';
     }

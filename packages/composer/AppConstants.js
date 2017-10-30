@@ -215,6 +215,23 @@ const SaveButtonTypes = keyMirror({
   SCHEDULE_DRAFT: null,
 });
 
+const InlineSaveButtonTypes = [
+  SaveButtonTypes.SAVE,
+  SaveButtonTypes.SAVE_AND_APPROVE,
+];
+
+const ButtonsQueuingTypesMap = new Map([
+  [SaveButtonTypes.ADD_TO_QUEUE, QueueingTypes.QUEUE],
+  [SaveButtonTypes.SHARE_NEXT, QueueingTypes.NEXT],
+  [SaveButtonTypes.SHARE_NOW, QueueingTypes.NOW],
+  [SaveButtonTypes.SCHEDULE_POST, QueueingTypes.CUSTOM],
+  [SaveButtonTypes.SAVE, QueueingTypes.SAVE],
+  [SaveButtonTypes.SAVE_AND_APPROVE, QueueingTypes.SAVE_AND_APPROVE],
+  [SaveButtonTypes.ADD_TO_DRAFTS, QueueingTypes.ADD_DRAFT],
+  [SaveButtonTypes.SHARE_NEXT_DRAFT, QueueingTypes.NEXT_DRAFT],
+  [SaveButtonTypes.SCHEDULE_DRAFT, QueueingTypes.CUSTOM_DRAFT],
+]);
+
 const ActionTypes = keyMirror({
   APP_RESET: null,
   APP_RECEIVE_USER_DATA: null,
@@ -390,7 +407,7 @@ export {
   NotificationTypes, NotificationScopes, FileUploadFormatsConfigs, MediaUploadConfig,
   MediaTypes, AppEnvironments, UploadTypes, ComposerInitiators, LinkAttachmentTextFieldTypes,
   FloatingErrorCodes, FixableErrorCodes, ErrorTypes, InlineErrorTypes, SaveButtonTypes,
-  DataImportEnvironments,
+  InlineSaveButtonTypes, ButtonsQueuingTypesMap, DataImportEnvironments,
 };
 
 export { bufferOrigins, bufferOriginRegex } from './external/ExternalSharedAppConstants';

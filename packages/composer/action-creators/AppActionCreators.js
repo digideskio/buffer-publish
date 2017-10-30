@@ -1,7 +1,9 @@
+import partition from 'lodash.partition';
 import AppDispatcher from '../dispatcher';
-import { ActionTypes, QueueingTypes, NotificationScopes,
-         ErrorTypes, FloatingErrorCodes, FixableErrorCodes,
-         InlineErrorTypes } from '../AppConstants';
+import {
+  ActionTypes, QueueingTypes, NotificationScopes, ErrorTypes, FloatingErrorCodes,
+  FixableErrorCodes, InlineErrorTypes, InlineSaveButtonTypes, ButtonsQueuingTypesMap,
+} from '../AppConstants';
 import NotificationActionCreators from '../action-creators/NotificationActionCreators';
 import WebAPIUtils from '../utils/WebAPIUtils';
 import ComposerStore from '../stores/ComposerStore';
@@ -11,6 +13,22 @@ import AppHooks from '../utils/lifecycle-hooks';
 import Metrics from '../utils/Metrics';
 import ModalActionCreators from '../__legacy-buffer-web-shared-components__/modal/actionCreators';
 import { extractSavedUpdatesIdsFromResponses } from '../utils/APIDataTransforms';
+
+const getDefaultQueueingType = () => {
+  const { saveButtons } = AppStore.getOptions();
+  const [inlineSaveButtonTypes, stackedSaveButtonTypes] =
+    partition(saveButtons, (button) => InlineSaveButtonTypes.includes(button));
+
+  let saveButtonType;
+
+  if (inlineSaveButtonTypes.length > 0) {
+    saveButtonType = inlineSaveButtonTypes[inlineSaveButtonTypes.length - 1];
+  } else if (stackedSaveButtonTypes.length > 0) {
+    saveButtonType = stackedSaveButtonTypes[0];
+  }
+
+  return ButtonsQueuingTypesMap.get(saveButtonType);
+};
 
 const AppActionCreators = {
 
@@ -27,7 +45,7 @@ const AppActionCreators = {
   },
 
   saveDrafts: (
-    queueingType = QueueingTypes.QUEUE,
+    queueingType = getDefaultQueueingType(),
     { customScheduleTime = null, shouldSkipEmptyTextAlert = true } = {}
   ) => {
     const { isSavingPossible } = AppStore.getAppState();

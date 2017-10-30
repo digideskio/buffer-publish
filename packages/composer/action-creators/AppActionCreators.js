@@ -50,13 +50,20 @@ const AppActionCreators = {
   ) => {
     const { isSavingPossible } = AppStore.getAppState();
     const { shouldAlwaysSkipEmptyTextAlert } = AppStore.getUserData();
-    const { updateId } = AppStore.getMetaData();
-    const isEditingUpdate = updateId !== null;
+    const metaData = AppStore.getMetaData();
+    const isEditingUpdate = metaData.updateId !== null;
+    const hadTextToPrefill = (
+      metaData.text ||
+      metaData.url ||
+      metaData.via ||
+      (metaData.retweetData && metaData.retweetData.comment)
+    );
 
     if (!isSavingPossible) return;
 
     const shouldShowEmptyTextAlert = (
       !isEditingUpdate &&
+      hadTextToPrefill &&
       !shouldAlwaysSkipEmptyTextAlert &&
       !shouldSkipEmptyTextAlert &&
       AppStore.hasFBDraftWithNoText()

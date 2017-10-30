@@ -358,7 +358,7 @@ class Composer extends React.Component {
     const hasComposerAlerts = this.hasComposerAlerts();
 
     const shouldShowAlertIcons =
-      hasComposerAlerts && (appState.isOmniboxEnabled === false || hasComposerBeenCollapsed);
+      hasComposerAlerts && appState.isOmniboxEnabled === false && hasComposerBeenCollapsed;
 
     const shouldShowOmniboxNotices =
       hasOmniboxNotices && !shouldShowAlertIcons && !this.isExpanded();
@@ -427,7 +427,8 @@ class Composer extends React.Component {
     const shouldShowComposerFeedbackMessages = (
       this.isExpanded() &&
       composerFeedbackMessages.length > 0 &&
-      (hasComposerBeenCollapsed || appState.isOmniboxEnabled === false) &&
+      hasComposerBeenCollapsed &&
+      !appState.isOmniboxEnabled &&
       !hasComposerNotPrefilledNotice
     );
 

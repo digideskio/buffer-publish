@@ -602,7 +602,8 @@ const toggleAllProfiles = () => {
 const markPreviouslyExpandedComposerAsCollapsed = () => {
   const expandedComposerId = state.appState.expandedComposerId;
   const wasOneComposerPreviouslyExpanded = expandedComposerId !== null;
-  if (wasOneComposerPreviouslyExpanded) {
+
+  if (wasOneComposerPreviouslyExpanded && !state.appState.isOmniboxEnabled) {
     state.appState.composersWhichHaveBeenCollapsed.add(expandedComposerId);
   }
 };

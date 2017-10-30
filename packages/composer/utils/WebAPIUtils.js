@@ -412,10 +412,12 @@ function getFormattedAPIData(serviceName, unformattedData) {
   const isUsingCustomScheduleTime = unformattedData.customScheduleTime !== null;
 
   const getFormattedMediaFields = () => {
-    let formattedMediaFields = {
+    // Default to non-set values on create, and nulls on update in order to
+    // override those fields in the API
+    let formattedMediaFields = isEditingUpdate ? {
       media: null,
       extra_media: null,
-    };
+    } : {};
 
     if (hasEnabledLinkAttachment) {
       const doesLinkAttachmentHaveThumbnail = serviceDraft.link.thumbnail !== null;

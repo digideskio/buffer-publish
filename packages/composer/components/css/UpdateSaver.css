@@ -135,9 +135,8 @@
 .rightAlignedDropdownContent {
   composes: dropdownContent;
 
-  top: auto;
+  top: -210px;
   right: auto;
-  bottom: 0;
   left: 100%;
   margin-left: 10px;
 }
@@ -179,10 +178,9 @@
 .dropdownContentAsMenuItem {
   composes: dropdownContent;
 
-  top: auto;
+  top: -367px;
   right: 100%;
   left: auto;
-  bottom: 0;
   margin-right: 10px;
 }
 

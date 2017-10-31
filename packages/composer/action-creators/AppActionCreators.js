@@ -51,7 +51,6 @@ const AppActionCreators = {
     const { isSavingPossible } = AppStore.getAppState();
     const { shouldAlwaysSkipEmptyTextAlert } = AppStore.getUserData();
     const metaData = AppStore.getMetaData();
-    const isEditingUpdate = metaData.updateId !== null;
     const hadTextToPrefill = (
       metaData.text ||
       metaData.url ||
@@ -62,7 +61,7 @@ const AppActionCreators = {
     if (!isSavingPossible) return;
 
     const shouldShowEmptyTextAlert = (
-      !isEditingUpdate &&
+      !metaData.isPrefillingExistingUpdate &&
       hadTextToPrefill &&
       !shouldAlwaysSkipEmptyTextAlert &&
       !shouldSkipEmptyTextAlert &&

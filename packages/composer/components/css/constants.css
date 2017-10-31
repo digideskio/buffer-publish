@@ -53,6 +53,8 @@
   composer-text-editor-zindex: 20;
   composer-text-editor-overlay-zindex: 30;
   attachment-glance-zindex: 30;
+  video-attachment-thumbnail-selector-zindex: 30;
+  video-attachment-thumbnail-selector-button-zindex: 30;
   composer-notice-icon-zindex: 40;
   saved-composer-feedback-zindex: 40;
   app-close-button-zindex: 50;

@@ -150,7 +150,6 @@
 .mediaWrapper {
   display: flex;
   flex-wrap: nowrap;
-  overflow: hidden;
   flex-basis: 100%;
   clear: both;
 }

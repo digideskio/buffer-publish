@@ -331,11 +331,12 @@ const ComposerActionCreators = {
     });
   },
 
-  addDraftVideo: (id, video) => {
+  addDraftVideo: (id, { video, thumbnail = null }) => {
     AppDispatcher.handleViewAction({
       actionType: ActionTypes.COMPOSER_ADD_DRAFT_VIDEO,
       id,
       video,
+      thumbnail,
     });
   },
 
@@ -405,6 +406,22 @@ const ComposerActionCreators = {
     AppDispatcher.handleViewAction({
       actionType: ActionTypes.COMPOSER_REMOVE_DRAFT_TEMP_IMAGE,
       id,
+    });
+  },
+
+  updateDraftVideoThumbnailPickerPayload: (id, video) => {
+    AppDispatcher.handleViewAction({
+      actionType: ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_THUMB_PICKER_PAYLOAD,
+      id,
+      video,
+    });
+  },
+
+  updateDraftVideoThumbnailPickerPayloadThumbnail: (id, thumbnail) => {
+    AppDispatcher.handleViewAction({
+      actionType: ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_THUMB_PICKER_PAYLOAD_THUMB,
+      id,
+      thumbnail,
     });
   },
 

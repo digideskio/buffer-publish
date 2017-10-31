@@ -1,21 +1,27 @@
 :import('./constants.css') {
   blue-color-primary-hue: blue-color-primary-hue;
+  primary-font-color: primary-font-color;
   secondary-font-color: secondary-font-color;
   composer-inner-border-color: composer-inner-border-color;
   update-attachment-bg-color: update-attachment-bg-color;
   composer-heading-color: composer-heading-color;
   outerspace: outerspace;
   geyser: geyser;
+  grey-color-primary-hue: grey-color-primary-hue;
+  video-attachment-thumbnail-selector-button-zindex: video-attachment-thumbnail-selector-button-zindex;
 }
 
 :root {
   --blue-color-primary-hue: blue-color-primary-hue;
+  --primary-font-color: primary-font-color;
   --secondary-font-color: secondary-font-color;
   --composer-inner-border-color: composer-inner-border-color;
   --box-bg-color: update-attachment-bg-color;
   --composer-heading-color: composer-heading-color;
   --outerspace: outerspace;
   --geyser: geyser;
+  --grey-color-primary-hue: grey-color-primary-hue;
+  --video-attachment-thumbnail-selector-button-zindex: video-attachment-thumbnail-selector-button-zindex;
 
   --box-padding: 10px;
 
@@ -27,17 +33,22 @@
   --thumbnail-border-radius: 3px;
 }
 
-.suggestedMediaBox {
+.suggestedMediaBoxContainer {
   position: relative;
+  min-width: 0;
+  height: 115px;
   padding: var(--box-padding) 0 20px var(--box-padding);
   border: 1px solid var(--composer-inner-border-color);
   border-right: none;
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
-  height: 115px;
-  overflow-y: hidden;
   flex-grow: 1;
   -ms-overflow-style: none;
+}
+
+.suggestedMediaBox {
+  padding: 0 4px 4px;
+  overflow: hidden;
 }
 
 .suggestedMediaBox::after {
@@ -114,15 +125,20 @@
 .suggestionsContainer {
   height: calc(var(--thumbnail-height) + var(--thumbnail-shadow-width) * 2);
   margin: 0 calc(var(--thumbnail-shadow-width)/2) -var(--thumbnail-shadow-width) -var(--thumbnail-shadow-width);
-  overflow: hidden;
 }
 
 .suggestionsScrollContainer {
   position: relative;
-  padding-bottom: 30px;
+  top: -10px;
+  padding: 10px 0 30px;
   white-space: nowrap;
   overflow-x: scroll;
   overflow-y: hidden;
+}
+
+.suggestedMediaItem {
+  position: relative;
+  display: inline-block;
 }
 
 .thumbnailContainer {
@@ -142,8 +158,19 @@
 	box-shadow: 0 0 0 var(--thumbnail-shadow-width) var(--blue-color-primary-hue);
 }
 
-.thumbnailContainer:hover {
+.thumbnailContainer:hover,
+.videoThumbnailPickerButton:hover + .thumbnailContainer {
   box-shadow: 0 0 0 var(--thumbnail-shadow-width) var(--blue-color-primary-hue);
+}
+
+.thumbnailContainer::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: 0;
+  left: 0;
+  height: 10px;
+  background: transparent;
 }
 
 .thumbnailContainer::after {
@@ -216,4 +243,36 @@
 
 .imgDataContainer:hover {
   z-index: 2;
+}
+
+.videoThumbnailPickerButton {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: var(--video-attachment-thumbnail-selector-button-zindex);
+  width: 14.5px;
+  height: 14px;
+  padding: 3px;
+  line-height: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 0;
+  border-radius: 2px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--primary-font-color);
+  outline: none;
+}
+
+.videoThumbnailPickerButton::before {
+  content: "Ⅲ";
+}
+
+.activeVideoThumbnailPickerButton {
+  composes: videoThumbnailPickerButton;
+}
+
+.videoThumbnailPickerButton:hover,
+.activeVideoThumbnailPickerButton {
+  background: #fff;
 }

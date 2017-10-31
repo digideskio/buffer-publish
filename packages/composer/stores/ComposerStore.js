@@ -37,6 +37,7 @@ const getNewDraft = (service) => ({
   images: [], // Media Attachment (type: image), data structure in getNewImage()
   availableImages: [],
   video: null, // Media Attachment (type: video); data structure in getNewVideo()
+  videoThumbnailPickerPayload: null, // Video data used when actively picking a thumbnail
   gif: null, // Media Attachment (type: gif); data structure in getNewGif()
   retweet: null, // Data structure in getNewRetweet()
   characterCount: service.charLimit === null ? null : 0, // Only updated for services w/ char limit
@@ -1025,7 +1026,7 @@ const updateUploadedImageDimensions = (url, width, height) => {
  * using === to establish if we're looking at the same video or not.
  */
 const addDraftVideo = monitorComposerLastInteractedWith(
-  (id, video) => {
+  (id, { video, thumbnail = null }) => {
     const draft = ComposerStore.getDraft(id);
     const hasAttachedImages = draft.images.length > 0;
     const hasAttachedVideo = draft.video !== null;
@@ -1039,13 +1040,15 @@ const addDraftVideo = monitorComposerLastInteractedWith(
     if (hasAttachedGif) draft.gif = null;
 
     draft.video = video;
+    draft.videoThumbnailPickerPayload = null;
+    if (thumbnail !== null) draft.video.thumbnail = thumbnail;
 
     ComposerActionCreators.draftVideoAdded(id, video);
     ComposerActionCreators.updateDraftCharacterCount(id, { didEditorStateChange: false });
   }
 );
 
-const addUploadedVideo = (videoData) => {
+const addSharedUploadedVideo = (videoData) => {
   const draftsSharedData = ComposerStore.getDraftsSharedData();
   draftsSharedData.uploadedVideos.push(videoData);
 };
@@ -1058,8 +1061,8 @@ const finishAddingProcessedVideo = (videoData) => {
   const draftId = processingVideos.get(videoData.uploadId);
   const video = getNewVideo(videoData);
 
-  addDraftVideo(draftId, video);
-  addUploadedVideo(video);
+  addDraftVideo(draftId, { video });
+  addSharedUploadedVideo(video);
   updateDraftFileUploadProgress(draftId, null);
 };
 
@@ -1149,6 +1152,14 @@ const removeDraftTempImage = (id, url = null) => {
   if (url === null || ComposerStore.getDraft(id).tempImage === url) {
     updateDraftTempImage(id, null);
   }
+};
+
+const updateDraftVideoThumbnailPickerPayload = (id, video) => {
+  ComposerStore.getDraft(id).videoThumbnailPickerPayload = video;
+};
+
+const updateDraftVideoThumbnailPickerPayloadThumbnail = (id, thumbnail) => {
+  ComposerStore.getDraft(id).videoThumbnailPickerPayload.thumbnail = thumbnail;
 };
 
 const addDraftRetweet = (id, retweetData) => {
@@ -1312,7 +1323,7 @@ const copyDraftMedia = (draftFrom, draftTo) => {
       addOmniNotice(message, draftTo.id);
       return;
     }
-    addDraftVideo(draftTo.id, draftFrom.video);
+    addDraftVideo(draftTo.id, { video: draftFrom.video });
     enableDraftAttachment(draftTo.id, AttachmentTypes.MEDIA);
   }
 };
@@ -1524,7 +1535,7 @@ const onDispatchedPayload = function(payload) {
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFT_VIDEO:
-      addDraftVideo(action.id, action.video);
+      addDraftVideo(action.id, { video: action.video, thumbnail: action.thumbnail });
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFT_GIF:
@@ -1553,6 +1564,14 @@ const onDispatchedPayload = function(payload) {
 
     case ActionTypes.COMPOSER_REMOVE_DRAFT_TEMP_IMAGE:
       removeDraftTempImage(action.id);
+      break;
+
+    case ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_THUMB_PICKER_PAYLOAD:
+      updateDraftVideoThumbnailPickerPayload(action.id, action.video);
+      break;
+
+    case ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_THUMB_PICKER_PAYLOAD_THUMB:
+      updateDraftVideoThumbnailPickerPayloadThumbnail(action.id, action.thumbnail);
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFTS_RETWEET:
@@ -1681,8 +1700,8 @@ const onDispatchedPayload = function(payload) {
 
     case ActionTypes.COMPOSER_ADD_DRAFTS_AUTO_UPLOADED_VIDEO:
       video = getNewVideo(action.video);
-      addUploadedVideo(video);
-      state.drafts.forEach((draft) => addDraftVideo(draft.id, video));
+      addSharedUploadedVideo(video);
+      state.drafts.forEach((draft) => addDraftVideo(draft.id, { video }));
       break;
 
     case ActionTypes.COMPOSER_DRAFTS_PREVENT_AUTO_ATTACHING_URLS:

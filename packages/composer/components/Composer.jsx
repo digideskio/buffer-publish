@@ -495,6 +495,7 @@ class Composer extends React.Component {
 
     const composerSuggestedMediaBox = (
       <SuggestedMediaBox
+        draft={draft}
         draftId={draft.id}
         suggestedMedia={this.getSuggestedMedia(true)}
         className={suggestedMediaBoxClassName}

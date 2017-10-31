@@ -9,6 +9,7 @@ import throttle from 'lodash.throttle';
 import ComposerActionCreators from '../action-creators/ComposerActionCreators';
 import AppActionCreators from '../action-creators/AppActionCreators';
 import { MediaTypes } from '../AppConstants';
+import VideoThumbnailPicker from './VideoThumbnailPicker';
 import Button from '../components/Button';
 import SuggestedMediaThumbnailInfo from './SuggestedMediaThumbnailInfo';
 import styles from './css/SuggestedMediaBox.css';
@@ -17,6 +18,7 @@ import { getHumanReadableSize, getHumanReadableTime } from '../utils/StringUtils
 
 class SuggestedMediaBox extends React.Component {
   static propTypes = {
+    draft: PropTypes.object.isRequired,
     draftId: PropTypes.string.isRequired,
     suggestedMedia: PropTypes.array.isRequired,
     className: PropTypes.string,
@@ -32,6 +34,7 @@ class SuggestedMediaBox extends React.Component {
     this.state = {
       canScrollLeft: false,
       canScrollRight: false,
+      wasSuggestedVideoThumbnailsPickerOpenFromMouseMove: null,
     };
   }
 
@@ -52,7 +55,7 @@ class SuggestedMediaBox extends React.Component {
         break;
 
       case MediaTypes.VIDEO:
-        ComposerActionCreators.addDraftVideo(this.props.draftId, media);
+        ComposerActionCreators.addDraftVideo(this.props.draftId, { video: media });
         break;
 
       case MediaTypes.GIF:
@@ -68,15 +71,58 @@ class SuggestedMediaBox extends React.Component {
     }
   };
 
-  onThumbnailMouseOver = (image) => {
-    ComposerActionCreators.updateDraftTempImage(this.props.draftId, image);
+  onThumbnailMouseOver = (media) => {
+    const tempImage = media.mediaType === MediaTypes.VIDEO ? media.thumbnail : media.url;
+    ComposerActionCreators.updateDraftTempImage(this.props.draftId, tempImage);
+
+    if (
+      media.mediaType === MediaTypes.VIDEO &&
+      this.state.wasSuggestedVideoThumbnailsPickerOpenFromMouseMove === null
+    ) {
+      ComposerActionCreators.updateDraftVideoThumbnailPickerPayload(this.props.draftId, media);
+      this.setState({ wasSuggestedVideoThumbnailsPickerOpenFromMouseMove: true });
+    }
   };
 
-  onThumbnailMouseOut = () => {
-    ComposerActionCreators.removeDraftTempImage(this.props.draftId);
+  onVideoThumbnailPickerMouseOut = (e) => {
+    if (
+      this.state.wasSuggestedVideoThumbnailsPickerOpenFromMouseMove &&
+      e.relatedTarget !== this.videoThumbnailPickerButton &&
+      !e.relatedTarget.closest('.videoThumbnailPicker')
+    ) {
+      ComposerActionCreators.updateDraftVideoThumbnailPickerPayload(this.props.draftId, null);
+      this.setState({ wasSuggestedVideoThumbnailsPickerOpenFromMouseMove: null });
+    }
   };
 
-  getSuggestedMediaItem = (suggestedItem) => {
+  onThumbnailMouseOut = (e) => {
+    if (e.relatedTarget !== this.videoThumbnailPickerButton) {
+      ComposerActionCreators.removeDraftTempImage(this.props.draftId);
+    }
+
+    this.onVideoThumbnailPickerMouseOut(e);
+  };
+
+  onSuggestedVideoThumbnailsPickerButtonClick = (video) => {
+    let payloadData;
+
+    if (
+      this.props.draft.videoThumbnailPickerPayload === null ||
+      this.state.wasSuggestedVideoThumbnailsPickerOpenFromMouseMove
+    ) {
+      payloadData = video;
+      this.setState({ wasSuggestedVideoThumbnailsPickerOpenFromMouseMove: false });
+    } else {
+      payloadData = null;
+      this.setState({ wasSuggestedVideoThumbnailsPickerOpenFromMouseMove: null });
+    }
+
+    ComposerActionCreators.updateDraftVideoThumbnailPickerPayload(this.props.draftId, payloadData);
+  };
+
+  onVideoAvailableThumbnailClick = () => { this.state.isVideoThumbnailPickerVisible = false; };
+
+  getSuggestedMediaItem = ({ suggestedItem, draft }) => {
     const mediaType = suggestedItem.mediaType;
     let suggestedMediaItem;
     const hasDimensionsData = suggestedItem.width && suggestedItem.height;
@@ -86,8 +132,8 @@ class SuggestedMediaBox extends React.Component {
         <Button
           className={styles.thumbnailContainer}
           onClick={this.onThumbnailClick.bind(this, suggestedItem)} // eslint-disable-line
-          onMouseOver={this.onThumbnailMouseOver.bind(this, suggestedItem.url)} // eslint-disable-line
-          onMouseMove={this.onThumbnailMouseOver.bind(this, suggestedItem.url)} // eslint-disable-line
+          onMouseOver={this.onThumbnailMouseOver.bind(this, suggestedItem)} // eslint-disable-line
+          onMouseMove={this.onThumbnailMouseOver.bind(this, suggestedItem)} // eslint-disable-line
           onMouseOut={this.onThumbnailMouseOut}
           key={suggestedItem.url}
         >
@@ -109,8 +155,8 @@ class SuggestedMediaBox extends React.Component {
         <Button
           className={styles.thumbnailContainer}
           onClick={this.onThumbnailClick.bind(this, suggestedItem)} // eslint-disable-line
-          onMouseOver={this.onThumbnailMouseOver.bind(this, suggestedItem.url)} // eslint-disable-line
-          onMouseMove={this.onThumbnailMouseOver.bind(this, suggestedItem.url)} // eslint-disable-line
+          onMouseOver={this.onThumbnailMouseOver.bind(this, suggestedItem)} // eslint-disable-line
+          onMouseMove={this.onThumbnailMouseOver.bind(this, suggestedItem)} // eslint-disable-line
           onMouseOut={this.onThumbnailMouseOut}
           key={`${suggestedItem.url}-${this.props.draftId}`}
         >
@@ -128,34 +174,51 @@ class SuggestedMediaBox extends React.Component {
       );
     } else if (mediaType === MediaTypes.VIDEO) {
       const iconClassName = ['bi bi-video', videoAttachmentThumbnailStyles.videoIcon].join(' ');
+      const videoThumbnailPickerButtonClassName = draft.videoThumbnailPickerPayload !== null ?
+        styles.activeVideoThumbnailPickerButton : styles.videoThumbnailPickerButton;
+
       suggestedMediaItem = (
-        <Button
-          className={styles.thumbnailContainer}
-          onClick={this.onThumbnailClick.bind(this, suggestedItem)} // eslint-disable-line
-          onMouseOver={this.onThumbnailMouseOver.bind(this, suggestedItem.thumbnail)} // eslint-disable-line
-          onMouseMove={this.onThumbnailMouseOver.bind(this, suggestedItem.thumbnail)} // eslint-disable-line
-          onMouseOut={this.onThumbnailMouseOut} key={suggestedItem.thumbnail}
+        <div
+          className={styles.suggestedMediaItem}
+          key={suggestedItem.thumbnail}
         >
-          <img
-            src={suggestedItem.thumbnail}
-            className={styles.thumbnail}
-            alt="Thumbnail of Suggested Video"
+          <Button
+            className={videoThumbnailPickerButtonClassName}
+            onClick={this.onSuggestedVideoThumbnailsPickerButtonClick.bind(this, suggestedItem)}
+            ref={(ref) => { this.videoThumbnailPickerButton = ref; }}
+            aria-label="Select a different thumbnail for that video"
+            title="Select a different thumbnail for that video"
+            aria-pressed={(draft.videoThumbnailPickerPayload !== null)}
           />
 
-          <span className={videoAttachmentThumbnailStyles.videoDataContainer}>
-            <div className={iconClassName} />
-            <div className={videoAttachmentThumbnailStyles.thumbnailInfo}>
-              <div className={videoAttachmentThumbnailStyles.thumbnailInfoText}>
-                <div className={videoAttachmentThumbnailStyles.videoSize}>
-                  {getHumanReadableSize(suggestedItem.size)}
-                </div>
-                <div className={videoAttachmentThumbnailStyles.videoDuration}>
-                  {getHumanReadableTime(suggestedItem.duration)}
+          <Button
+            className={styles.thumbnailContainer}
+            onClick={this.onThumbnailClick.bind(this, suggestedItem)} // eslint-disable-line
+            onMouseOver={this.onThumbnailMouseOver.bind(this, suggestedItem)} // eslint-disable-line
+            onMouseMove={this.onThumbnailMouseOver.bind(this, suggestedItem)} // eslint-disable-line
+            onMouseOut={this.onThumbnailMouseOut}
+          >
+            <img
+              src={suggestedItem.thumbnail}
+              className={styles.thumbnail}
+              alt="Thumbnail of Suggested Video"
+            />
+
+            <span className={videoAttachmentThumbnailStyles.videoDataContainer}>
+              <div className={iconClassName} />
+              <div className={videoAttachmentThumbnailStyles.thumbnailInfo}>
+                <div className={videoAttachmentThumbnailStyles.thumbnailInfoText}>
+                  <div className={videoAttachmentThumbnailStyles.videoSize}>
+                    {getHumanReadableSize(suggestedItem.size)}
+                  </div>
+                  <div className={videoAttachmentThumbnailStyles.videoDuration}>
+                    {getHumanReadableTime(suggestedItem.duration)}
+                  </div>
                 </div>
               </div>
-            </div>
-          </span>
-        </Button>
+            </span>
+          </Button>
+        </div>
       );
     }
 
@@ -191,11 +254,11 @@ class SuggestedMediaBox extends React.Component {
   }, 100);
 
   render() {
-    const { suggestedMedia, className } = this.props;
+    const { draft, suggestedMedia, className } = this.props;
     const { canScrollLeft, canScrollRight } = this.state;
 
-    const suggestedMediaBoxClassName = [
-      styles.suggestedMediaBox,
+    const suggestedMediaBoxContainerClassName = [
+      styles.suggestedMediaBoxContainer,
       className,
     ].join(' ');
 
@@ -210,31 +273,40 @@ class SuggestedMediaBox extends React.Component {
     ].join(' ');
 
     return (
-      <div className={suggestedMediaBoxClassName}>
-        <div className={styles.header} role="heading">
-          {`Suggested media (${suggestedMedia.length}):`}
-        </div>
+      <div className={suggestedMediaBoxContainerClassName}>
+        {draft.videoThumbnailPickerPayload !== null &&
+          <VideoThumbnailPicker
+            draft={draft}
+            onMouseOut={this.onVideoThumbnailPickerMouseOut}
+            className="videoThumbnailPicker"
+          />}
 
-        <div className={styles.scrollControlsContainer}>
-          <Button
-            className={scrollLeftButtonClassName} onClick={this.scrollLeft}
-            aria-label="Scroll suggested media left" disabled={!canScrollLeft}
-          />
-          <Button
-            className={scrollRightButtonClassName} onClick={this.scrollRight}
-            aria-label="Scroll suggested media right" disabled={!canScrollRight}
-          />
-        </div>
+        <div className={styles.suggestedMediaBox}>
+          <div className={styles.header} role="heading">
+            {`Suggested media (${suggestedMedia.length}):`}
+          </div>
 
-        <div className={styles.suggestionsContainer}>
-          <div
-            className={styles.suggestionsScrollContainer}
-            ref={(ref) => (this.suggestionsScrollContainer = ref)}
-            onScroll={this.updateScrollButtonsDisplay}
-          >
-            {[...suggestedMedia].map((suggestedItem) => (
-              this.getSuggestedMediaItem(suggestedItem)
-            ))}
+          <div className={styles.scrollControlsContainer}>
+            <Button
+              className={scrollLeftButtonClassName} onClick={this.scrollLeft}
+              aria-label="Scroll suggested media left" disabled={!canScrollLeft}
+            />
+            <Button
+              className={scrollRightButtonClassName} onClick={this.scrollRight}
+              aria-label="Scroll suggested media right" disabled={!canScrollRight}
+            />
+          </div>
+
+          <div className={styles.suggestionsContainer}>
+            <div
+              className={styles.suggestionsScrollContainer}
+              ref={(ref) => (this.suggestionsScrollContainer = ref)}
+              onScroll={this.updateScrollButtonsDisplay}
+            >
+              {[...suggestedMedia].map((suggestedItem) => (
+                this.getSuggestedMediaItem({ suggestedItem, draft })
+              ))}
+            </div>
           </div>
         </div>
       </div>

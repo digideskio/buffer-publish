@@ -168,6 +168,7 @@ const DataImportUtils = {
           images.map((image) => ({
             ...image,
             picture: image.picture || image.photo,
+            alt_text: image.alt_text === 'null' ? null : image.alt_text,
           }));
 
         meta = Object.assign({}, metaData, {

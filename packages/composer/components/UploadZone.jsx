@@ -110,7 +110,9 @@ class UploadZone extends React.Component {
       <div>
         <Dropzone
           activeClassName={this.props.classNames.uploadZoneActive}
-          className={transparentClickZoneClassName} onDrop={this.onDrop}
+          className={transparentClickZoneClassName}
+          onDrop={this.onDrop}
+          multiple={false}
           ref={(node) => { this.dropzone = node; }}
         />
         <Button

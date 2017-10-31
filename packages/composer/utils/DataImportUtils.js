@@ -149,6 +149,9 @@ const DataImportUtils = {
           isPinnedToSlot: null,
           didUserSetScheduledAt: null,
           linkData: null,
+          images: metaData.images ?
+            metaData.images.map((image) => ({ picture: image })) :
+            null,
           video: null,
           videoThumbnail: null,
           sourceUrl: null,
@@ -160,6 +163,12 @@ const DataImportUtils = {
 
       case DataImportEnvironments.WEB_DASHBOARD: {
         const metaScheduledAt = scheduledAt || update.due_at || null;
+
+        const formatImages = (images) =>
+          images.map((image) => ({
+            ...image,
+            picture: image.picture || image.photo,
+          }));
 
         meta = Object.assign({}, metaData, {
           isPrefillingExistingUpdate: Object.keys(update).length > 0,
@@ -190,7 +199,8 @@ const DataImportUtils = {
           ),
           images: (
             (update.media && update.media.picture &&
-              [update.media].concat(update.extra_media || [])) || null
+              formatImages([update.media].concat(update.extra_media || []))) ||
+            null
           ),
           video: (
             (update.media && update.media.video) ||

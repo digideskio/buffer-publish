@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash.clonedeep';
 import twitterText from 'twitter-text';
 import AppDispatcher from '../dispatcher';
-import { ActionTypes, AttachmentTypes, NotificationScopes, AppEnvironments } from '../AppConstants';
+import { ActionTypes, AttachmentTypes, NotificationScopes } from '../AppConstants';
 import AppHooks from '../utils/lifecycle-hooks';
 import AppActionCreators from '../action-creators/AppActionCreators';
 import NotificationActionCreators from '../action-creators/NotificationActionCreators';

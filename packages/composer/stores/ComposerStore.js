@@ -88,7 +88,7 @@ const getNewAvailableImage = (image, sourceLink) => ({
 });
 
 // Image factory
-const getNewImage = (url, width = null, height = null, altText = null) => ({
+const getNewImage = ({ url, width = null, height = null, altText = null }) => ({
   url,
   mediaType: MediaTypes.IMAGE,
   width,
@@ -558,7 +558,11 @@ const updateDraftSourceLinkData = (id, { url, images = [] }) => {
 
   Object.assign(draftSourceLink, {
     url,
-    availableImages: images.map((image) => getNewImage(image.url, image.width, image.height)),
+    availableImages: images.map((image) => getNewImage({
+      url: image.url,
+      width: image.width,
+      height: image.height,
+    })),
   });
 };
 
@@ -824,14 +828,14 @@ const updateDraftLinkData = monitorComposerLastInteractedWith(
         fallBackToLinkAttachmentData ? draft.link.description : null
       ),
       thumbnail: getFirstNonNullOrUndefined(
-        thumbnail !== null ? getNewImage(thumbnail) : null,
+        thumbnail !== null ? getNewImage({ url: thumbnail }) : null,
         fallBackToLinkAttachmentData ? draft.link.thumbnail : null,
         (hasAvailableThumbnails ?
-          getNewImage(
-            availableThumbnails[0].url,
-            availableThumbnails[0].width,
-            availableThumbnails[0].height
-          ) :
+          getNewImage({
+            url: availableThumbnails[0].url,
+            width: availableThumbnails[0].width,
+            height: availableThumbnails[0].height,
+          }) :
           null)
       ),
       thumbnailHttps: null,
@@ -839,7 +843,7 @@ const updateDraftLinkData = monitorComposerLastInteractedWith(
         (availableThumbnails !== null ?
           [
             ...(hasUnavailableThumbnailAttached ? [draft.link.thumbnail] : []),
-            ...availableThumbnails.map((thumb) => getNewImage(thumb.url, thumb.width, thumb.height)),
+            ...availableThumbnails.map((thumb) => getNewImage({ url: thumb.url, width: thumb.width, height: thumb.height })),
           ] :
           null),
         fallBackToLinkAttachmentData ? draft.link.availableThumbnails : null
@@ -938,7 +942,7 @@ const addDraftLinkAvailableThumbnail = (id, thumbnail) => {
 
 const addDraftUploadedLinkThumbnail = (id, url, width, height) => {
   const draftsSharedData = ComposerStore.getDraftsSharedData();
-  const formattedImage = getNewImage(url, width, height);
+  const formattedImage = getNewImage({ url, width, height });
 
   /**
    * It's important for the three collections below to share the same formattedImage
@@ -955,7 +959,7 @@ const addDraftUploadedLinkThumbnail = (id, url, width, height) => {
 
 const addDraftUploadedImage = (draftId, url, width, height) => {
   const draftsSharedData = ComposerStore.getDraftsSharedData();
-  const formattedImage = getNewImage(url, width, height);
+  const formattedImage = getNewImage({ url, width, height });
 
   /**
    * It's important for the two collections below to share the same formattedImage
@@ -971,7 +975,7 @@ const addDraftUploadedImage = (draftId, url, width, height) => {
 
 const addAutoUploadedImage = (url, altText) => {
   const draftsSharedData = ComposerStore.getDraftsSharedData();
-  const formattedImage = getNewImage(url, null, null, altText);
+  const formattedImage = getNewImage({ url, altText });
 
   /**
    * It's important for the two collections below to share the same formattedImage
@@ -1267,7 +1271,12 @@ const addDraftAvailableImages = (id, images, sourceLink) => {
   const draft = ComposerStore.getDraft(id);
 
   const newAvailableImages = images.map((image) => {
-    const formattedImage = getNewImage(image.url, image.width, image.height);
+    const formattedImage = getNewImage({
+      url: image.url,
+      width: image.width,
+      height: image.height,
+    });
+
     return getNewAvailableImage(formattedImage, sourceLink);
   });
 

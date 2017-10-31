@@ -233,6 +233,7 @@ const DataImportUtils = {
         );
 
       const getFormattedVideoData = (videoData, videoThumbnail) => ({
+        uploadId: videoData.id,
         name: videoData.title,
         availableThumbnails: videoData.thumbnails,
         duration: videoData.details.duration,

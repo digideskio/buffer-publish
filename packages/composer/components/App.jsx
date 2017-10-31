@@ -112,6 +112,7 @@ class App extends React.Component {
       via: PropTypes.string,
       images: PropTypes.arrayOf(PropTypes.string),
       video: PropTypes.shape({
+        id: React.PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
         duration: PropTypes.number.isRequired,
         durationMs: PropTypes.number.isRequired,

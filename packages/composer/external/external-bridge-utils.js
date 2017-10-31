@@ -77,7 +77,11 @@ const init = ({
     top: getElRefOffset(domNode, 'top'),
     left: getElRefOffset(domNode, 'left'),
   } : {
-    top: document.body.scrollTop + 40,
+    top: (
+      window.pageYOffset ||
+      document.documentElement.scrollTop ||
+      document.body.scrollTop
+    ) + 50,
   };
 
   const { userData, metaData, csrfToken, imageDimensionsKey } =

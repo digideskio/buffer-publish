@@ -534,11 +534,11 @@ const ComposerActionCreators = {
     ComposerActionCreators.monitorDraftFileUploadProgress(id);
   },
 
-  updateImageDescription: (image, description) => {
+  updateImageAltText: (image, altText) => {
     AppDispatcher.handleViewAction({
-      actionType: ActionTypes.COMPOSER_UPDATE_IMAGE_DESCRIPTION,
+      actionType: ActionTypes.COMPOSER_UPDATE_IMAGE_ALT_TEXT,
       image,
-      description,
+      altText,
     });
   },
 

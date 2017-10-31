@@ -445,7 +445,7 @@ function getFormattedAPIData(serviceName, unformattedData) {
           photo: image.url,
           picture: image.url,
           thumbnail: image.url,
-          alt_text: image.description,
+          alt_text: image.description || null,
         });
 
         const images = serviceDraft.images.slice();

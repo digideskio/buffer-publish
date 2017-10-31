@@ -39,7 +39,7 @@ class ImageDescriptionInput extends React.Component {
   };
 
   onClick = () => {
-    ComposerActionCreators.updateImageDescription(this.props.mediaAttachment, this.state.description);
+    ComposerActionCreators.updateImageAltText(this.props.mediaAttachment, this.state.description);
     this.setState({ saveButtonText: 'Saved!' });
   }
 

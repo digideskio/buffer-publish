@@ -93,7 +93,7 @@ const getNewImage = (url, width = null, height = null) => ({
   mediaType: MediaTypes.IMAGE,
   width,
   height,
-  description: null,
+  alt_text: null,
 });
 
 // Gif factory
@@ -996,8 +996,8 @@ const removeDraftImage = monitorComposerLastInteractedWith(
 );
 
 // TODO: Refactor to not rely on reference mutations
-const updateImageDescription = (image, description) => {
-  image.description = description;
+const updateImageAltText = (image, altText) => {
+  image.altText = altText;
 };
 
 /**
@@ -1682,8 +1682,8 @@ const onDispatchedPayload = function(payload) {
       selectPreviousLinkThumbnail(action.draftId);
       break;
 
-    case ActionTypes.COMPOSER_UPDATE_IMAGE_DESCRIPTION:
-      updateImageDescription(action.image, action.description);
+    case ActionTypes.COMPOSER_UPDATE_IMAGE_ALT_TEXT:
+      updateImageAltText(action.image, action.altText);
       break;
 
     case ActionTypes.COMPOSER_UPDATE_UPLOADED_IMAGE_DIMENSIONS:

@@ -93,7 +93,7 @@ const getNewImage = (url, width = null, height = null) => ({
   mediaType: MediaTypes.IMAGE,
   width,
   height,
-  alt_text: null,
+  altText: null,
 });
 
 // Gif factory

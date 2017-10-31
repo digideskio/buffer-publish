@@ -16,7 +16,7 @@ class ImageDescriptionInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      description: this.props.mediaAttachment.description || '',
+      altText: this.props.mediaAttachment.altText || '',
       saveButtonText: 'Save',
       count: 0,
     };
@@ -24,7 +24,7 @@ class ImageDescriptionInput extends React.Component {
 
   handleChange = (e) => {
     this.setState({
-      description: e.target.value,
+      altText: e.target.value,
       saveButtonText: 'Save',
       count: e.target.value.length,
     });
@@ -39,7 +39,7 @@ class ImageDescriptionInput extends React.Component {
   };
 
   onClick = () => {
-    ComposerActionCreators.updateImageAltText(this.props.mediaAttachment, this.state.description);
+    ComposerActionCreators.updateImageAltText(this.props.mediaAttachment, this.state.altText);
     this.setState({ saveButtonText: 'Saved!' });
   }
 
@@ -48,7 +48,7 @@ class ImageDescriptionInput extends React.Component {
       <div className={styles.container}>
         <Input
           className={styles.textInput} type="text"
-          value={this.state.description} onChange={this.handleChange}
+          value={this.state.altText} onChange={this.handleChange}
           placeholder="Add a description for people with visual impairments"
         />
         <CharacterCount count={this.state.count} maxCount={420} className={styles.charCount} />

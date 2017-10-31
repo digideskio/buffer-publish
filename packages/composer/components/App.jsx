@@ -256,23 +256,6 @@ class App extends React.Component {
 
   onCloseButtonClick = () => AppActionCreators.closeComposer();
 
-  /**
-   * options.preserveStateOnClose is used to reset the composer's state on close.
-   * However, if options.preserveStateOnClose is true in a previous composer instance,
-   * since this is a singleton, we'll need to reset the composer's state on load
-   * if the new instance has `options.preserveStateOnClose === false`
-   */
-  resetStateIfNecessary = (() => {
-    let prevPreserveStateOnClose = false;
-
-    return ({ preserveStateOnClose }) => {
-      if (preserveStateOnClose === false && preserveStateOnClose !== prevPreserveStateOnClose) {
-        AppInitActionCreators.resetData();
-      }
-      prevPreserveStateOnClose = preserveStateOnClose;
-    };
-  })();
-
   init = () => {
     const {
       profilesData,
@@ -284,17 +267,41 @@ class App extends React.Component {
       onNewPublish,
     } = this.props;
 
-    this.resetStateIfNecessary(options);
+    const { preserveStateOnClose } = options;
+    const { preserveStateOnClose: prevPreserveStateOnClose = false } = AppStore.getOptions();
 
-    AppInitActionCreators.loadInitialData({
-      profilesData,
-      userData,
-      metaData,
-      csrfToken,
-      imageDimensionsKey,
-      options,
-      onNewPublish,
-    });
+    /**
+     * options.preserveStateOnClose is used to reset the composers' state on close.
+     * However, if options.preserveStateOnClose is true in a previous app instance,
+     * since stores are singletons, we'll need to reset the composers' state on load
+     * if the new instance has `options.preserveStateOnClose === false`
+     */
+    if (preserveStateOnClose === false && preserveStateOnClose !== prevPreserveStateOnClose) {
+      AppInitActionCreators.resetData();
+    }
+
+    /**
+     * And since we're sometimes preserving state with options.preserveStateOnClose,
+     * we don't want to load initial data *again* when state was preserved. Only load
+     * initial data again if the previous instance had its stores reset on close, or if
+     * this new instance had its stores reset on init.
+     */
+    const shouldLoadInitialData = (
+      prevPreserveStateOnClose !== true ||
+      preserveStateOnClose === false
+    );
+
+    if (shouldLoadInitialData) {
+      AppInitActionCreators.loadInitialData({
+        profilesData,
+        userData,
+        metaData,
+        csrfToken,
+        imageDimensionsKey,
+        options,
+        onNewPublish,
+      });
+    }
 
     WebSocket.init();
 

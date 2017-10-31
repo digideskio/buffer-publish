@@ -43,10 +43,6 @@ const FloatingErrorCodes = [
   1003, 1005, 1006, 1007, 1042, 1050, 1051,
 ];
 
-const InlineErrorTypes = keyMirror({
-  FIXABLE: null,
-});
-
 const ComposerInitiators = {
   ImageBufferButtons: [
     'hover_button_image',
@@ -319,7 +315,7 @@ const ActionTypes = keyMirror({
   COMPOSER_UPDATE_DRAFT_LINK_THUMBNAIL: null,
   COMPOSER_UPDATE_PREVIOUS_LINK_THUMBNAIL: null,
   COMPOSER_UPDATE_NEXT_LINK_THUMBNAIL: null,
-  UPDATE_DRAFT_ERROR_TYPE: null,
+  UPDATE_DRAFT_HAS_SAVING_ERROR: null,
   COMPOSER_CLEAR_INLINE_ERRORS: null,
   UPDATE_DRAFT_IS_SAVED: null,
   REMEMBER_MODAL_VIEW: null,
@@ -406,8 +402,8 @@ export {
   Services, AttachmentTypes, QueueingTypes, ActionTypes, AsyncOperationStates,
   NotificationTypes, NotificationScopes, FileUploadFormatsConfigs, MediaUploadConfig,
   MediaTypes, AppEnvironments, UploadTypes, ComposerInitiators, LinkAttachmentTextFieldTypes,
-  FloatingErrorCodes, ErrorTypes, InlineErrorTypes, SaveButtonTypes,
-  InlineSaveButtonTypes, ButtonsQueuingTypesMap, DataImportEnvironments,
+  FloatingErrorCodes, ErrorTypes, SaveButtonTypes, InlineSaveButtonTypes, ButtonsQueuingTypesMap,
+  DataImportEnvironments,
 };
 
 export { bufferOrigins, bufferOriginRegex } from './external/ExternalSharedAppConstants';

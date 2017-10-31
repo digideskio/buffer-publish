@@ -41,11 +41,11 @@ const ComposerActionCreators = {
     });
   },
 
-  updateDraftErrorType: (id, errorType) => {
+  updateDraftHasSavingError: (id, hasSavingError) => {
     AppDispatcher.handleViewAction({
-      actionType: ActionTypes.UPDATE_DRAFT_ERROR_TYPE,
+      actionType: ActionTypes.UPDATE_DRAFT_HAS_SAVING_ERROR,
       id,
-      errorType,
+      hasSavingError,
     });
   },
 

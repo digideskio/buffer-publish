@@ -2,7 +2,7 @@ import partition from 'lodash.partition';
 import AppDispatcher from '../dispatcher';
 import {
   ActionTypes, QueueingTypes, NotificationScopes, ErrorTypes, FloatingErrorCodes,
-  InlineErrorTypes, InlineSaveButtonTypes, ButtonsQueuingTypesMap,
+  InlineSaveButtonTypes, ButtonsQueuingTypesMap,
 } from '../AppConstants';
 import NotificationActionCreators from '../action-creators/NotificationActionCreators';
 import WebAPIUtils from '../utils/WebAPIUtils';
@@ -159,7 +159,7 @@ const AppActionCreators = {
         // or failed, and offering custom messages accordingly)
         successfulResponses.forEach((successfulResponse) => {
           AppActionCreators.clearComposerInlineErrors(successfulResponse.serviceName);
-          ComposerActionCreators.updateDraftErrorType(successfulResponse.serviceName, null);
+          ComposerActionCreators.updateDraftHasSavingError(successfulResponse.serviceName, false);
           ComposerActionCreators.updateDraftIsSaved(successfulResponse.serviceName);
           NotificationActionCreators.queueSuccess({
             scope: `${NotificationScopes.UPDATE_SAVING}-${successfulResponse.serviceName}`,
@@ -168,11 +168,7 @@ const AppActionCreators = {
 
         unsuccessfulResponses.forEach((unsuccessfulResponse) => {
           AppActionCreators.clearComposerInlineErrors(unsuccessfulResponse.serviceName);
-
-          ComposerActionCreators.updateDraftErrorType(
-            unsuccessfulResponse.serviceName,
-            InlineErrorTypes.FIXABLE
-          );
+          ComposerActionCreators.updateDraftHasSavingError(unsuccessfulResponse.serviceName, true);
 
           const scope = FloatingErrorCodes.includes(unsuccessfulResponse.code) ?
             `${NotificationScopes.UPDATE_SAVING}-${ErrorTypes.FLOATING}` :

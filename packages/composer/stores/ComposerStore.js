@@ -7,7 +7,7 @@ import twitterText from 'twitter-text';
 import AppDispatcher from '../dispatcher';
 import {
   ActionTypes, Services, AttachmentTypes, MediaTypes, ComposerInitiators,
-  AppEnvironments, NotificationScopes, ErrorTypes, InlineErrorTypes,
+  AppEnvironments, NotificationScopes, ErrorTypes,
 } from '../AppConstants';
 import AppStore from './AppStore';
 import AppActionCreators from '../action-creators/AppActionCreators';
@@ -50,7 +50,7 @@ const getNewDraft = (service) => ({
        AttachmentTypes.MEDIA : null,
   sourceLink: null, // Source url and page metadata; data structure in getNewSourceLink()
   isSaved: false,
-  savingErrorType: null,
+  hasSavingError: false,
   shortLinkLongLinkMap: new Map(),
   scheduledAt: null,
   isPinnedToSlot: null, // null when scheduledAt is null, true/false otherwise
@@ -282,8 +282,9 @@ const monitorComposerLastInteractedWith = (fn) => (draftId, ...restArgs) => {
   return fn(draftId, ...restArgs);
 };
 
-const updateDraftErrorType = (id, errorType) =>
-  (ComposerStore.getDraft(id).savingErrorType = errorType);
+const updateDraftHasSavingError = (id, hasSavingError) => {
+  ComposerStore.getDraft(id).hasSavingError = hasSavingError;
+};
 
 const clearDraftInlineErrors = (id) => {
   const notifications = NotificationStore.getVisibleNotifications().filter((notif) =>
@@ -1595,8 +1596,8 @@ const onDispatchedPayload = function(payload) {
       shouldEmitChange = disableDraft(action.id);
       break;
 
-    case ActionTypes.UPDATE_DRAFT_ERROR_TYPE:
-      updateDraftErrorType(action.id, action.errorType);
+    case ActionTypes.UPDATE_DRAFT_HAS_SAVING_ERROR:
+      updateDraftHasSavingError(action.id, action.hasSavingError);
       break;
 
     case ActionTypes.COMPOSER_CLEAR_INLINE_ERRORS:

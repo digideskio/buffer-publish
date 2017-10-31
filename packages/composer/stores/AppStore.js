@@ -890,7 +890,7 @@ const onDispatchedPayload = (payload) => {
     case ActionTypes.COMPOSER_UPDATE_DRAFT_SOURCE_LINK_DATA:
     case ActionTypes.COMPOSER_ENABLE:
     case ActionTypes.PROFILE_DROPDOWN_HIDDEN:
-    case ActionTypes.UPDATE_DRAFT_ERROR_TYPE:
+    case ActionTypes.UPDATE_DRAFT_HAS_SAVING_ERROR:
       isPayloadInteresting = true;
       break;
 

@@ -22,8 +22,8 @@ import ComposerProfileTooltip from '../components/ComposerProfileTooltip';
 import PinterestComposerBar from '../components/PinterestComposerBar';
 import TooltipList from '../components/TooltipList';
 import Button from '../components/Button';
-import { AttachmentTypes, MediaTypes, NotificationScopes, ErrorTypes,
-         QueueingTypes, InlineErrorTypes } from '../AppConstants';
+import { AttachmentTypes, MediaTypes, NotificationScopes, ErrorTypes, QueueingTypes }
+  from '../AppConstants';
 
 import styles from './css/Composer.css';
 
@@ -368,7 +368,7 @@ class Composer extends React.Component {
       !this.isExpanded() &&
       (shouldShowOmniboxNotices || shouldShowAlertIcons) ?
       styles.updateZoneWithNotice : null,
-      draft.savingErrorType === InlineErrorTypes.FIXABLE ? styles.editableErrorUpdateZone : '',
+      draft.hasSavingError ? styles.editableErrorUpdateZone : '',
       this.isDisplayedBehind() && isLocked ? styles.lockedDisplayedBehindAnotherZone :
       this.isDisplayedBehind() ? styles.displayedBehindAnotherUpdateZone : '',
     ].join(' ');

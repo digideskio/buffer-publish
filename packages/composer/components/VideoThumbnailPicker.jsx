@@ -21,7 +21,7 @@ const VideoThumbnailPicker = ({ draft, onMouseOut, className }) => {
 
   return (
     <div className={`${styles.container} ${className}`} onMouseOut={onMouseOut}>
-      <p className={styles.header}>Pick a thumbnail:</p>
+      <p className={styles.header}>Pick another thumbnail:</p>
       <div className={styles.scrollContainer}>
         {video.availableThumbnails.map((thumbnail) => (
           <Button

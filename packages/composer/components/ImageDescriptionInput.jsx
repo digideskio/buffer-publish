@@ -4,6 +4,7 @@ import ComposerActionCreators from '../action-creators/ComposerActionCreators';
 import ModalActionCreators from '../__legacy-buffer-web-shared-components__/modal/actionCreators';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import CharacterCount from './CharacterCount';
 import styles from './css/ImageDescriptionInput.css';
 
 class ImageDescriptionInput extends React.Component {
@@ -17,6 +18,7 @@ class ImageDescriptionInput extends React.Component {
     this.state = {
       description: this.props.mediaAttachment.description || '',
       saveButtonText: 'Save',
+      count: 0,
     };
   }
 
@@ -24,6 +26,7 @@ class ImageDescriptionInput extends React.Component {
     this.setState({
       description: e.target.value,
       saveButtonText: 'Save',
+      count: e.target.value.length,
     });
   }
 
@@ -48,7 +51,8 @@ class ImageDescriptionInput extends React.Component {
           value={this.state.description} onChange={this.handleChange}
           placeholder="Add a description for people with visual impairments"
         />
-        <Button className={styles.button} onClick={this.onClick}>
+        <CharacterCount count={this.state.count} maxCount={420} className={styles.charCount} />
+        <Button className={styles.button} onClick={this.onClick} disabled={this.state.count > 420}>
           {this.state.saveButtonText}
         </Button>
       </div>

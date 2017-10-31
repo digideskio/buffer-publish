@@ -32,3 +32,7 @@
   composes: button from './Button.css';
   margin-left: 20px;
 }
+
+.charCount {
+  margin-left: 10px;
+}

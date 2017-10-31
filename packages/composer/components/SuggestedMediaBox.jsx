@@ -87,7 +87,6 @@ class SuggestedMediaBox extends React.Component {
   onVideoThumbnailPickerMouseOut = (e) => {
     if (
       this.state.wasSuggestedVideoThumbnailsPickerOpenFromMouseMove &&
-      e.relatedTarget !== this.videoThumbnailPickerButton &&
       !e.relatedTarget.closest('.videoThumbnailPicker')
     ) {
       ComposerActionCreators.updateDraftVideoThumbnailPickerPayload(this.props.draftId, null);
@@ -96,33 +95,13 @@ class SuggestedMediaBox extends React.Component {
   };
 
   onThumbnailMouseOut = (e) => {
-    if (e.relatedTarget !== this.videoThumbnailPickerButton) {
-      ComposerActionCreators.removeDraftTempImage(this.props.draftId);
-    }
-
+    ComposerActionCreators.removeDraftTempImage(this.props.draftId);
     this.onVideoThumbnailPickerMouseOut(e);
-  };
-
-  onSuggestedVideoThumbnailsPickerButtonClick = (video) => {
-    let payloadData;
-
-    if (
-      this.props.draft.videoThumbnailPickerPayload === null ||
-      this.state.wasSuggestedVideoThumbnailsPickerOpenFromMouseMove
-    ) {
-      payloadData = video;
-      this.setState({ wasSuggestedVideoThumbnailsPickerOpenFromMouseMove: false });
-    } else {
-      payloadData = null;
-      this.setState({ wasSuggestedVideoThumbnailsPickerOpenFromMouseMove: null });
-    }
-
-    ComposerActionCreators.updateDraftVideoThumbnailPickerPayload(this.props.draftId, payloadData);
   };
 
   onVideoAvailableThumbnailClick = () => { this.state.isVideoThumbnailPickerVisible = false; };
 
-  getSuggestedMediaItem = ({ suggestedItem, draft }) => {
+  getSuggestedMediaItem = ({ suggestedItem }) => {
     const mediaType = suggestedItem.mediaType;
     let suggestedMediaItem;
     const hasDimensionsData = suggestedItem.width && suggestedItem.height;
@@ -174,23 +153,12 @@ class SuggestedMediaBox extends React.Component {
       );
     } else if (mediaType === MediaTypes.VIDEO) {
       const iconClassName = ['bi bi-video', videoAttachmentThumbnailStyles.videoIcon].join(' ');
-      const videoThumbnailPickerButtonClassName = draft.videoThumbnailPickerPayload !== null ?
-        styles.activeVideoThumbnailPickerButton : styles.videoThumbnailPickerButton;
 
       suggestedMediaItem = (
         <div
           className={styles.suggestedMediaItem}
           key={suggestedItem.thumbnail}
         >
-          <Button
-            className={videoThumbnailPickerButtonClassName}
-            onClick={this.onSuggestedVideoThumbnailsPickerButtonClick.bind(this, suggestedItem)}
-            ref={(ref) => { this.videoThumbnailPickerButton = ref; }}
-            aria-label="Select a different thumbnail for that video"
-            title="Select a different thumbnail for that video"
-            aria-pressed={(draft.videoThumbnailPickerPayload !== null)}
-          />
-
           <Button
             className={styles.thumbnailContainer}
             onClick={this.onThumbnailClick.bind(this, suggestedItem)} // eslint-disable-line

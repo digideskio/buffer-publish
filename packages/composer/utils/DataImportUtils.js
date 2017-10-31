@@ -254,7 +254,7 @@ const DataImportUtils = {
         shouldShowRolloutTooltip: meta.should_show_rollout_tooltip,
         shouldEnableFacebookAutocomplete: meta.should_enable_fb_autocomplete,
         shouldUseNewTwitterAutocomplete: meta.should_use_new_twitter_autocomplete,
-        showTwitterImageDescription: meta.should_show_twitter_alt_text,
+        showTwitterImageDescription: meta.should_show_twitter_alt_text && !meta.updateId,
         text: meta.text || null,
         url: meta.url || null,
         sourceUrl: meta.sourceUrl || null,

@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import { EditorState, ContentState } from '@bufferapp/draft-js';
 import debounce from 'lodash.debounce';
 import findLastIndexOf from 'lodash.findlastindex';
+import cloneDeep from 'lodash.clonedeep';
 import twitterText from 'twitter-text';
 import AppDispatcher from '../dispatcher';
 import {
@@ -1039,7 +1040,7 @@ const addDraftVideo = monitorComposerLastInteractedWith(
     if (hasAttachedVideo) draft.video = null; // Override video
     if (hasAttachedGif) draft.gif = null;
 
-    draft.video = video;
+    draft.video = cloneDeep(video);
     draft.videoThumbnailPickerPayload = null;
     if (thumbnail !== null) draft.video.thumbnail = thumbnail;
 

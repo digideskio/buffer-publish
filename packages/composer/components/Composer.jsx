@@ -167,7 +167,7 @@ class Composer extends React.Component {
     if (shouldFilterOutAttachedMedia) {
       suggestedMedia = suggestedMedia.filter((suggestedItem) => (
         !draft.images.find((image) => suggestedItem.url === image.url) &&
-        draft.video !== suggestedItem &&
+        !(draft.video && draft.video.url === suggestedItem.url) &&
         !(draft.gif && draft.gif.url === suggestedItem.url)
       ));
     }

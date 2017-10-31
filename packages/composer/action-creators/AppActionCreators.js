@@ -60,6 +60,11 @@ const AppActionCreators = {
 
     if (!isSavingPossible) return;
 
+    const { saveButtons } = AppStore.getOptions();
+    const allowedQueuingTypes =
+      saveButtons.map((saveButtonType) => ButtonsQueuingTypesMap.get(saveButtonType));
+    if (!allowedQueuingTypes.includes(queueingType)) return;
+
     const shouldShowEmptyTextAlert = (
       !metaData.isPrefillingExistingUpdate &&
       hadTextToPrefill &&

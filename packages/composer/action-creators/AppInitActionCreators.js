@@ -169,7 +169,7 @@ const loadInitialMetaData = (metaData) => {
       facebookMentionEntities: metaData.facebookMentionEntities,
       via: metaData.via,
       composerInitiator: metaData.composerInitiator,
-      isEditingUpdate: metaData.updateId !== null,
+      isPrefillingExistingUpdate: metaData.isPrefillingExistingUpdate,
     });
 
     observeStore(AppStore, (store) => store.getAppState().isLoaded)

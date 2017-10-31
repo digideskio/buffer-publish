@@ -154,6 +154,7 @@ const DataImportUtils = {
           sourceUrl: null,
           facebookMentionEntities: null,
           should_show_rollout_tooltip: false,
+          isPrefillingExistingUpdate: false,
         });
         break;
 
@@ -161,6 +162,7 @@ const DataImportUtils = {
         const metaScheduledAt = scheduledAt || update.due_at || null;
 
         meta = Object.assign({}, metaData, {
+          isPrefillingExistingUpdate: Object.keys(update).length > 0,
           should_show_help_button: false,
           updateId: update.id || null,
           scheduledAt: metaScheduledAt,
@@ -272,6 +274,7 @@ const DataImportUtils = {
         didUserSetScheduledAt: meta.didUserSetScheduledAt,
         facebookMentionEntities: meta.facebookMentionEntities !== null ?
           getFormattedFacebookMentionEntities(meta.facebookMentionEntities) : null,
+        isPrefillingExistingUpdate: meta.isPrefillingExistingUpdate,
       };
     }
 

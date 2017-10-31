@@ -410,7 +410,7 @@ const setDraftInitialText = ({
   facebookMentionEntities,
   via,
   composerInitiator,
-  isEditingUpdate,
+  isPrefillingExistingUpdate,
 }) => {
   const draft = ComposerStore.getDraft(id);
 
@@ -455,7 +455,7 @@ const setDraftInitialText = ({
 
   if (
     draft.service.doesRequireHumanInteractionToUpdateText &&
-    !isEditingUpdate &&
+    !isPrefillingExistingUpdate &&
     !willGetOverridenByOmnibox
   ) {
     NotificationActionCreators.queueInfo({
@@ -504,7 +504,7 @@ const setDraftsInitialText = ({
   facebookMentionEntities,
   via,
   composerInitiator,
-  isEditingUpdate,
+  isPrefillingExistingUpdate,
 }) => {
   state.drafts.forEach((draft) =>
     setDraftInitialText({
@@ -514,7 +514,7 @@ const setDraftsInitialText = ({
       facebookMentionEntities,
       via,
       composerInitiator,
-      isEditingUpdate,
+      isPrefillingExistingUpdate,
     })
   );
 };

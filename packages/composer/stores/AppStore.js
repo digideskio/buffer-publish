@@ -384,8 +384,8 @@ const checkIfSavingPossible = () => {
     };
   }
 
-  // Updates shouldn't have been saved already, or contain only non-fixable errors
-  if (ComposerStore.areDraftsSavedOrUnfixable()) {
+  // Updates shouldn't have been saved already
+  if (ComposerStore.areAllDraftsSaved()) {
     return {
       isSavingPossible: false,
       whatPreventsSaving: [{

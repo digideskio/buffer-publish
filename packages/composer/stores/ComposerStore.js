@@ -238,25 +238,13 @@ const ComposerStore = Object.assign({}, EventEmitter.prototype, {
     ComposerStore.getDraft(id).enabledAttachmentType === AttachmentTypes.LINK,
   doesDraftHaveSourceLink: (id) => ComposerStore.getDraft(id).sourceLink !== null,
 
-  isDraftLocked: (id) => {
-    const draft = ComposerStore.getDraft(id);
-    return (
-      draft.savingErrorType === InlineErrorTypes.NON_FIXABLE ||
-      draft.isSaved
-    );
-  },
+  isDraftLocked: (id) => ComposerStore.getDraft(id).isSaved,
 
   getDraftsSharedData: () => state.draftsSharedData,
 
   areAllDraftsSaved: () => {
     const enabledDrafts = ComposerStore.getEnabledDrafts();
     return enabledDrafts.length > 0 && enabledDrafts.every((draft) => draft.isSaved);
-  },
-
-  areDraftsSavedOrUnfixable: () => {
-    const enabledDrafts = ComposerStore.getEnabledDrafts();
-    return enabledDrafts.every((draft) =>
-            draft.isSaved || draft.savingErrorType === InlineErrorTypes.NON_FIXABLE);
   },
 
   // Retrieve long link from shortLinkLongLinkMap (if url is long link already, return url)

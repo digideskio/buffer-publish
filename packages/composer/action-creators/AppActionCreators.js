@@ -2,7 +2,7 @@ import partition from 'lodash.partition';
 import AppDispatcher from '../dispatcher';
 import {
   ActionTypes, QueueingTypes, NotificationScopes, ErrorTypes, FloatingErrorCodes,
-  FixableErrorCodes, InlineErrorTypes, InlineSaveButtonTypes, ButtonsQueuingTypesMap,
+  InlineErrorTypes, InlineSaveButtonTypes, ButtonsQueuingTypesMap,
 } from '../AppConstants';
 import NotificationActionCreators from '../action-creators/NotificationActionCreators';
 import WebAPIUtils from '../utils/WebAPIUtils';
@@ -169,17 +169,10 @@ const AppActionCreators = {
         unsuccessfulResponses.forEach((unsuccessfulResponse) => {
           AppActionCreators.clearComposerInlineErrors(unsuccessfulResponse.serviceName);
 
-          if (FixableErrorCodes.includes(unsuccessfulResponse.code)) {
-            ComposerActionCreators.updateDraftErrorType(
-              unsuccessfulResponse.serviceName,
-              InlineErrorTypes.FIXABLE
-            );
-          } else {
-            ComposerActionCreators.updateDraftErrorType(
-              unsuccessfulResponse.serviceName,
-              InlineErrorTypes.NON_FIXABLE
-            );
-          }
+          ComposerActionCreators.updateDraftErrorType(
+            unsuccessfulResponse.serviceName,
+            InlineErrorTypes.FIXABLE
+          );
 
           const scope = FloatingErrorCodes.includes(unsuccessfulResponse.code) ?
             `${NotificationScopes.UPDATE_SAVING}-${ErrorTypes.FLOATING}` :

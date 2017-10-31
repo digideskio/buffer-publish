@@ -345,11 +345,7 @@ class Composer extends React.Component {
       this.isRetweetAttachmentEnabled() && this.hasRetweetAttachment();
 
     const hasComposerBeenCollapsed = appState.composersWhichHaveBeenCollapsed.has(draft.id);
-
-    const isLocked = (
-      draft.savingErrorType === InlineErrorTypes.NON_FIXABLE ||
-      draft.isSaved
-    );
+    const isLocked = draft.isSaved;
 
     const editorPlaceholder = shouldShowRetweetAttachment ? 'Add a comment…' : undefined;
     const savedComposer = draft.isSaved;
@@ -372,8 +368,7 @@ class Composer extends React.Component {
       !this.isExpanded() &&
       (shouldShowOmniboxNotices || shouldShowAlertIcons) ?
       styles.updateZoneWithNotice : null,
-      draft.savingErrorType === InlineErrorTypes.FIXABLE ? styles.editableErrorUpdateZone :
-      draft.savingErrorType !== null ? styles.errorUpdateZone : '',
+      draft.savingErrorType === InlineErrorTypes.FIXABLE ? styles.editableErrorUpdateZone : '',
       this.isDisplayedBehind() && isLocked ? styles.lockedDisplayedBehindAnotherZone :
       this.isDisplayedBehind() ? styles.displayedBehindAnotherUpdateZone : '',
     ].join(' ');

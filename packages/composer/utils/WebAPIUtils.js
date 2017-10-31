@@ -62,7 +62,6 @@ const WebAPIUtils = {
       return API.post(endpoint, formattedData)
         .catch(() => ({
           success: false,
-          code: 0,
           message: `Whoops, Buffer's servers couldn't be reached to save the
             update, sorry about that. Would you be up for trying again?`,
         }))

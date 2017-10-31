@@ -43,12 +43,8 @@ const FloatingErrorCodes = [
   1003, 1005, 1006, 1007, 1042, 1050, 1051,
 ];
 
-// 0 is never returned by our api; it's a code used locally for generic connectivity errors
-const FixableErrorCodes = [0, 1025, 1004, 1023, 1030, 1031, 1034];
-
 const InlineErrorTypes = keyMirror({
   FIXABLE: null,
-  NON_FIXABLE: null,
 });
 
 const ComposerInitiators = {
@@ -407,7 +403,7 @@ export {
   Services, AttachmentTypes, QueueingTypes, ActionTypes, AsyncOperationStates,
   NotificationTypes, NotificationScopes, FileUploadFormatsConfigs, MediaUploadConfig,
   MediaTypes, AppEnvironments, UploadTypes, ComposerInitiators, LinkAttachmentTextFieldTypes,
-  FloatingErrorCodes, FixableErrorCodes, ErrorTypes, InlineErrorTypes, SaveButtonTypes,
+  FloatingErrorCodes, ErrorTypes, InlineErrorTypes, SaveButtonTypes,
   InlineSaveButtonTypes, ButtonsQueuingTypesMap, DataImportEnvironments,
 };
 

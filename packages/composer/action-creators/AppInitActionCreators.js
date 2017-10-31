@@ -99,15 +99,15 @@ const loadInitialImageDimensionsKey = (imageDimensionsKey) => {
   });
 };
 
-const dispatchAutoUploadedImage = (url) => new Promise((resolve) => {
-  const isGif = getFileTypeFromUrl(url) === 'gif';
+const dispatchAutoUploadedImage = (image) => new Promise((resolve) => {
+  const isGif = getFileTypeFromUrl(image.picture) === 'gif';
 
   if (isGif) {
-    getStillDataUriFromGif(url)
+    getStillDataUriFromGif(image.picture)
       .then((dataUri) => {
         AppDispatcher.handleViewAction({
           actionType: ActionTypes.COMPOSER_ADD_DRAFTS_AUTO_UPLOADED_GIF,
-          url,
+          url: image.picture,
           stillGifUrl: dataUri,
         });
         resolve();
@@ -115,7 +115,7 @@ const dispatchAutoUploadedImage = (url) => new Promise((resolve) => {
       .catch(() => {
         AppDispatcher.handleViewAction({
           actionType: ActionTypes.COMPOSER_ADD_DRAFTS_AUTO_UPLOADED_GIF,
-          url,
+          url: image.picture,
           stillGifUrl: null,
         });
         resolve();
@@ -123,7 +123,8 @@ const dispatchAutoUploadedImage = (url) => new Promise((resolve) => {
   } else {
     AppDispatcher.handleViewAction({
       actionType: ActionTypes.COMPOSER_ADD_DRAFTS_AUTO_UPLOADED_IMAGE,
-      url,
+      url: image.picture,
+      altText: image.alt_text,
     });
     resolve();
   }
@@ -242,7 +243,7 @@ const loadInitialMetaData = (metaData) => {
   }
 
   if (metaData.images) {
-    const dispatches = metaData.images.map((imageUrl) => dispatchAutoUploadedImage(imageUrl));
+    const dispatches = metaData.images.map((image) => dispatchAutoUploadedImage(image));
 
     // TODO: Instead of blocking on dispatchAutoUploadedImage(), we could dispatch instantly,
     // and dispatch one more time once stillGifUrl has been generated, like dimensions below
@@ -257,12 +258,12 @@ const loadInitialMetaData = (metaData) => {
         // where there are store queries that actually depend on it
         observeStore(AppStore, (store) => store.getAppState().isLoaded)
           .then(() => {
-            metaData.images.forEach((imageUrl) => {
-              WebAPIUtils.getImageDimensions(imageUrl)
+            metaData.images.forEach((image) => {
+              WebAPIUtils.getImageDimensions(image.picture)
                 .then(({ width, height }) => {
                   AppDispatcher.handleViewAction({
                     actionType: ActionTypes.COMPOSER_UPDATE_UPLOADED_IMAGE_DIMENSIONS,
-                    url: imageUrl,
+                    url: image.picture,
                     width,
                     height,
                   });

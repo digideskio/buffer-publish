@@ -188,10 +188,7 @@ const DataImportUtils = {
           ),
           images: (
             (update.media && update.media.picture &&
-              [update.media.picture].concat(
-                (update.extra_media || []).map((extraMedia) => extraMedia.picture || extraMedia.photo)
-              )) ||
-            null
+              [update.media].concat(update.extra_media || [])) || null
           ),
           video: (
             (update.media && update.media.video) ||
@@ -254,7 +251,7 @@ const DataImportUtils = {
         shouldShowRolloutTooltip: meta.should_show_rollout_tooltip,
         shouldEnableFacebookAutocomplete: meta.should_enable_fb_autocomplete,
         shouldUseNewTwitterAutocomplete: meta.should_use_new_twitter_autocomplete,
-        showTwitterImageDescription: meta.should_show_twitter_alt_text && !meta.updateId,
+        showTwitterImageDescription: meta.should_show_twitter_alt_text,
         text: meta.text || null,
         url: meta.url || null,
         sourceUrl: meta.sourceUrl || null,

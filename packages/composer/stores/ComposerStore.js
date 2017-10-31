@@ -88,12 +88,12 @@ const getNewAvailableImage = (image, sourceLink) => ({
 });
 
 // Image factory
-const getNewImage = (url, width = null, height = null) => ({
+const getNewImage = (url, width = null, height = null, altText = null) => ({
   url,
   mediaType: MediaTypes.IMAGE,
   width,
   height,
-  altText: null,
+  altText,
 });
 
 // Gif factory
@@ -968,9 +968,9 @@ const addDraftUploadedImage = (draftId, url, width, height) => {
   addDraftImage(draftId, formattedImage);
 };
 
-const addAutoUploadedImage = (url) => {
+const addAutoUploadedImage = (url, altText) => {
   const draftsSharedData = ComposerStore.getDraftsSharedData();
-  const formattedImage = getNewImage(url);
+  const formattedImage = getNewImage(url, null, null, altText);
 
   /**
    * It's important for the two collections below to share the same formattedImage
@@ -1667,7 +1667,7 @@ const onDispatchedPayload = function(payload) {
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFTS_AUTO_UPLOADED_IMAGE:
-      addAutoUploadedImage(action.url);
+      addAutoUploadedImage(action.url, action.altText);
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFTS_AUTO_UPLOADED_GIF:

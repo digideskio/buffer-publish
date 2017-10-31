@@ -153,6 +153,7 @@ const DataImportUtils = {
           videoThumbnail: null,
           sourceUrl: null,
           facebookMentionEntities: null,
+          should_show_rollout_tooltip: false,
         });
         break;
 
@@ -250,6 +251,7 @@ const DataImportUtils = {
         environment: meta.environment,
         appEnvironment: DataImportUtils.formatAppEnv(meta.application),
         shouldDisplayHelpButton: meta.should_show_help_button,
+        shouldShowRolloutTooltip: meta.should_show_rollout_tooltip,
         shouldEnableFacebookAutocomplete: meta.should_enable_fb_autocomplete,
         shouldUseNewTwitterAutocomplete: meta.should_use_new_twitter_autocomplete,
         showTwitterImageDescription: meta.should_show_twitter_alt_text,

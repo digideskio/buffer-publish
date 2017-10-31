@@ -352,6 +352,7 @@ const NotificationScopes = keyMirror({
   AUTOCOMPLETE: null,
   COMPOSER_NOTICE_NOT_PREFILLED: null,
   MC_OMNIBOX_EDIT_NOTICE: null,
+  MC_ROLLOUT_INFO: null,
 });
 
 /**

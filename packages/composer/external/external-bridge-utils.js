@@ -210,6 +210,7 @@ function extractSerializablePropsFromBufferGlobal(env, bufferGlobal) {
       should_use_new_twitter_autocomplete:
         bufferGlobal.data.enabled_application_modes
         .includes('web-twitter-typeahead-autocomplete'),
+      should_show_rollout_tooltip: false,
     },
     csrfToken: bufferGlobal.csrf,
     imageDimensionsKey: bufferGlobal.data.imagedimensions_key,

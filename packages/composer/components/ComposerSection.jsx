@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import uniqBy from 'lodash.uniqby';
+import AppStore from '../stores/AppStore';
 import ComposerStore from '../stores/ComposerStore';
 import Composer from '../components/Composer';
+import ProductRolloutTooltip from '../components/ProductRolloutTooltip';
 import styles from './css/ComposerSection.css';
 
 const getComposerState = () => ({
@@ -47,24 +50,43 @@ class ComposerSection extends React.Component {
     const hasEnabledDrafts = enabledDrafts.length > 0 || isOmniboxEnabled;
     const composersHaveBeenExpanded = appState.composersHaveBeenExpanded;
 
-    const getComposerComponent = (draft) => (
-      <Composer
-        appState={appState}
-        draft={draft}
-        key={draft.id}
-        enabledDrafts={enabledDrafts}
-        draftsSharedData={draftsSharedData}
-        profiles={profiles}
-        expandedComposerId={isOmniboxEnabled ? draft.id : appState.expandedComposerId}
-        visibleNotifications={visibleNotifications}
-        areAllDraftsSaved={areAllDraftsSaved}
-        selectedProfiles={selectedProfiles}
-        shouldEnableFacebookAutocomplete={shouldEnableFacebookAutocomplete}
-        showTwitterImageDescription={showTwitterImageDescription}
-        shouldShowInlineSubprofileDropdown={shouldShowInlineSubprofileDropdown}
-        composerPosition={composerPosition}
-      />
-    );
+    const getComposerComponent = (draft, index) => {
+      const canUserPostToMultipleNetworks = uniqBy(profiles, (p) => p.service.name).length > 1;
+      const showRolloutTooltip = (
+        AppStore.getOptions().canSelectProfiles &&
+        canUserPostToMultipleNetworks &&
+        (isOmniboxEnabled || index === enabledDrafts.length - 1)
+      );
+
+      const children =
+        showRolloutTooltip ?
+          <ProductRolloutTooltip
+            visibleNotifications={visibleNotifications}
+            isOmniboxEnabled={isOmniboxEnabled}
+          /> :
+          null;
+
+      return (
+        <Composer
+          appState={appState}
+          draft={draft}
+          key={draft.id}
+          enabledDrafts={enabledDrafts}
+          draftsSharedData={draftsSharedData}
+          profiles={profiles}
+          expandedComposerId={isOmniboxEnabled ? draft.id : appState.expandedComposerId}
+          visibleNotifications={visibleNotifications}
+          areAllDraftsSaved={areAllDraftsSaved}
+          selectedProfiles={selectedProfiles}
+          shouldEnableFacebookAutocomplete={shouldEnableFacebookAutocomplete}
+          showTwitterImageDescription={showTwitterImageDescription}
+          shouldShowInlineSubprofileDropdown={shouldShowInlineSubprofileDropdown}
+          composerPosition={composerPosition}
+        >
+          {children}
+        </Composer>
+      );
+    };
 
     return (
       <div className={styles.composerSection}>

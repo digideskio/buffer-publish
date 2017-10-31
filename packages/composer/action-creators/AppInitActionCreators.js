@@ -272,6 +272,16 @@ const loadInitialMetaData = (metaData) => {
       });
   }
 
+  if (metaData.shouldShowRolloutTooltip) {
+    NotificationActionCreators.queueInfo({
+      scope: NotificationScopes.MC_ROLLOUT_INFO,
+      message: `<h4>Add a personal touch</h4>
+                You can now customize your messages for each network when using the
+                Buffer dashboard. Feel free to make each one personal and unique!`,
+      shouldOnlyCloseOnce: true,
+    });
+  }
+
   if (metaData.video) {
     AppDispatcher.handleViewAction({
       actionType: ActionTypes.COMPOSER_ADD_DRAFTS_AUTO_UPLOADED_VIDEO,

@@ -102,6 +102,7 @@ class App extends React.Component {
       shouldEnableFacebookAutocomplete: PropTypes.bool.isRequired,
       shouldUseNewTwitterAutocomplete: PropTypes.bool.isRequired,
       showTwitterImageDescription: PropTypes.bool.isRequired,
+      shouldShowRolloutTooltip: PropTypes.bool.isRequired,
       updateId: PropTypes.string,
       scheduledAt: PropTypes.number,
       isPinnedToSlot: PropTypes.bool,
@@ -348,6 +349,7 @@ class App extends React.Component {
       NotificationScopes.BOARD_CREATION,
       NotificationScopes.MC_OMNIBOX_EDIT_NOTICE,
       NotificationScopes.UPDATE_SAVING_AGGREGATE,
+      NotificationScopes.MC_ROLLOUT_INFO,
       ...Services.map((service) => `${NotificationScopes.UPDATE_SAVING}-${service.name}`),
       ...Services.map((service) => (
         `${NotificationScopes.UPDATE_SAVING}-${ErrorTypes.INLINE}-${service.name}`

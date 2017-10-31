@@ -225,6 +225,11 @@ class SuggestedMediaBox extends React.Component {
     const { draft, suggestedMedia, className } = this.props;
     const { canScrollLeft, canScrollRight } = this.state;
 
+    const showVideoThumbnailPicker = (
+      draft.videoThumbnailPickerPayload !== null &&
+      draft.videoThumbnailPickerPayload.availableThumbnails.length > 1
+    );
+
     const suggestedMediaBoxContainerClassName = [
       styles.suggestedMediaBoxContainer,
       className,
@@ -242,7 +247,7 @@ class SuggestedMediaBox extends React.Component {
 
     return (
       <div className={suggestedMediaBoxContainerClassName}>
-        {draft.videoThumbnailPickerPayload !== null &&
+        {showVideoThumbnailPicker &&
           <VideoThumbnailPicker
             draft={draft}
             onMouseOut={this.onVideoThumbnailPickerMouseOut}

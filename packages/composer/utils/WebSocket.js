@@ -9,8 +9,10 @@
  * queued to return the same info as the already-running request.
  */
 
+import InternalPusher from 'pusher-js';
 import ServerActionCreators from '../action-creators/ServerActionCreators';
 import AppStore from '../stores/AppStore';
+import { AppEnvironments } from '../AppConstants';
 
 const handleTranscodedVideo = (data) => {
   ServerActionCreators.videoProcessed({
@@ -65,18 +67,42 @@ class WebSocket {
     const hasWebSocketConnectionOpen = false; // Only one connection's necessary
 
     return () => {
-      if (hasWebSocketConnectionOpen) return;
+      const { appEnvironment } = AppStore.getMetaData();
+      const isDashboardEnv = appEnvironment === AppEnvironments.WEB_DASHBOARD;
+      let pusherInstance;
 
-      const userId = AppStore.getUserData().id;
+      // Reuse existing Pusher connection on dashboard
+      if (isDashboardEnv) {
+        pusherInstance = InternalPusher.instances[0];
+      // Create new Pusher connection in extension
+      } else {
+        if (hasWebSocketConnectionOpen) return;
 
-      // Pusher.channel_auth_endpoint = WebSocket.PUSHER_AUTH_ENDPOINT;
-      window.__pusher.channel_auth_endpoint = WebSocket.PUSHER_AUTH_ENDPOINT;
-      const pusher = new Pusher(WebSocket.PUSHER_API_KEY);
-      const channel = pusher.subscribe(`private-updates-${userId}`);
+        const userId = AppStore.getUserData().id;
 
-      eventHandlers.forEach((handler, event) => channel.bind(event, handler));
+        // Pusher.channel_auth_endpoint = WebSocket.PUSHER_AUTH_ENDPOINT;
+        window.__pusher.channel_auth_endpoint = WebSocket.PUSHER_AUTH_ENDPOINT;
+        const pusher = new Pusher(WebSocket.PUSHER_API_KEY);
+        pusherInstance = pusher.subscribe(`private-updates-${userId}`);
+      }
+
+      eventHandlers.forEach((handler, event) => pusherInstance.bind(event, handler));
     };
   })();
+
+  static cleanUp = () => {
+    const { appEnvironment } = AppStore.getMetaData();
+    const isDashboardEnv = appEnvironment === AppEnvironments.WEB_DASHBOARD;
+    let pusherInstance;
+
+    if (isDashboardEnv) {
+      pusherInstance = InternalPusher.instances[0];
+    } else {
+      pusherInstance = window.__pusher;
+    }
+
+    eventHandlers.forEach((handler, event) => pusherInstance.unbind(event, handler));
+  };
 }
 
 export default WebSocket;

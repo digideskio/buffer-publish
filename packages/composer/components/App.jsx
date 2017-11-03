@@ -113,7 +113,7 @@ class App extends React.Component {
       via: PropTypes.string,
       images: PropTypes.arrayOf(PropTypes.object),
       video: PropTypes.shape({
-        id: React.PropTypes.string.isRequired,
+        id: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
         duration: PropTypes.number.isRequired,
         durationMs: PropTypes.number.isRequired,
@@ -231,6 +231,8 @@ class App extends React.Component {
     if (!this.props.options.preserveStateOnClose) {
       AppInitActionCreators.resetData();
     }
+
+    WebSocket.cleanUp();
   }
 
   onStoreChange = () => this.setState(getState());

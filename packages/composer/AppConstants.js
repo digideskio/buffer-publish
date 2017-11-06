@@ -398,12 +398,17 @@ const MediaUploadConfig = {
   endpoint: '/upload/media',
 };
 
+const bufferOrigins = new Map([
+  ['local', 'https://local.buffer.com'],
+  ['production', 'https://buffer.com'],
+]);
+
+const bufferOriginRegex = /https?:\/\/(?:[^.]+\.)?buffer(?:app)?\.com/;
+
 export {
   Services, AttachmentTypes, QueueingTypes, ActionTypes, AsyncOperationStates,
   NotificationTypes, NotificationScopes, FileUploadFormatsConfigs, MediaUploadConfig,
   MediaTypes, AppEnvironments, UploadTypes, ComposerInitiators, LinkAttachmentTextFieldTypes,
   FloatingErrorCodes, ErrorTypes, SaveButtonTypes, InlineSaveButtonTypes, ButtonsQueuingTypesMap,
-  DataImportEnvironments,
+  DataImportEnvironments, bufferOrigins, bufferOriginRegex,
 };
-
-export { bufferOrigins, bufferOriginRegex } from './external/ExternalSharedAppConstants';

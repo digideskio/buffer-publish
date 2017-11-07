@@ -46,6 +46,7 @@
 
 .scrollLeftButton {
   border: solid 1px #e6ebef;
+  border-radius: 0;
   border-top-right-radius: 2px;
   border-bottom-right-radius: 2px;
   border-left: none;
@@ -54,6 +55,7 @@
 
 .scrollRightButton {
   border: solid 1px #e6ebef;
+  border-radius: 0;
   right: 0px;
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;

@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import ComposerActionCreators from '../action-creators/ComposerActionCreators';
 import styles from './css/LinkAttachmentThumbnailEditor.css';
 import { FileUploadFormatsConfigs, UploadTypes } from '../AppConstants';
+import { escapeParens } from '../utils/StringUtils';
 import UploadZone from '../components/UploadZone';
 import Button from '../components/Button';
 import CircularUploadIndicator from '../components/progress-indicators/CircularUploadIndicator';
@@ -72,7 +73,7 @@ class LinkAttachmentThumbnailEditor extends React.Component {
         {hasThumbnail &&
           <div
             className={thumbnailStyles}
-            style={{ backgroundImage: `url(${selectedThumbnail.url})` }}
+            style={{ backgroundImage: `url(${escapeParens(selectedThumbnail.url)})` }}
             role="img" aria-label="Link Thumbnail"
           />}
 

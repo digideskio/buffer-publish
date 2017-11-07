@@ -55,7 +55,14 @@ const getAbsoluteUrl = (link) => {
 const getUnicodeAwareLength = (str) => [...str].length;
 const makeUnicodeAwareIndexUnaware = (str, i) => Array.from(str).slice(0, i).join('').length;
 
+/**
+ * Escape parens in a string. Useful for CSS style tags, where external resources
+ * linked using `url()` have parens acting as special characters.
+ */
+const cachedParensRegex = /(\(|\))/g;
+const escapeParens = (str) => str.replace(cachedParensRegex, '\\$1');
+
 export {
-  getHumanReadableSize, getHumanReadableTime, getFileTypeFromUrl,
-  getAbsoluteUrl, generateUniqueId, getUnicodeAwareLength, makeUnicodeAwareIndexUnaware,
+  getHumanReadableSize, getHumanReadableTime, getFileTypeFromUrl, getAbsoluteUrl,
+  generateUniqueId, getUnicodeAwareLength, makeUnicodeAwareIndexUnaware, escapeParens,
 };

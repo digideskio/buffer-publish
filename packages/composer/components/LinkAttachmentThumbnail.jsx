@@ -4,6 +4,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { escapeParens } from '../utils/StringUtils';
 import styles from './css/LinkAttachmentThumbnail.css';
 
 const LinkAttachmentThumbnail = (props) => {
@@ -15,7 +16,7 @@ const LinkAttachmentThumbnail = (props) => {
       {hasThumbnail ?
         <div
           className={styles.thumbnail}
-          style={{ backgroundImage: `url(${thumbnail.url})` }}
+          style={{ backgroundImage: `url(${escapeParens(thumbnail.url)})` }}
         /> :
         <div className={styles.thumbnailPlaceholder} />}
     </div>

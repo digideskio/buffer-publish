@@ -4,6 +4,7 @@ import ComposerActionCreators from '../action-creators/ComposerActionCreators';
 import AppActionCreators from '../action-creators/AppActionCreators';
 import CloseButton from '../components/CloseButton';
 import Button from '../components/Button';
+import { escapeParens } from '../utils/StringUtils';
 import { MediaTypes } from '../AppConstants';
 import styles from './css/MediaAttachmentThumbnail.css';
 import ModalActionCreators from '../__legacy-buffer-web-shared-components__/modal/actionCreators';
@@ -79,7 +80,7 @@ class MediaAttachmentThumbnail extends React.Component {
           className={styles.imageContainer}
           aria-label={ariaLabel}
           data-tip={tooltipCopy} onClick={this.onClick}
-          style={{ backgroundImage: `url(${thumbnail})` }}
+          style={{ backgroundImage: `url(${escapeParens(thumbnail)})` }}
         >
           {isVideo &&
             <span className={videoThumbnailClass} aria-label="video attachment" />

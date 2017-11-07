@@ -5,6 +5,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { AttachmentTypes } from '../AppConstants';
+import { escapeParens } from '../utils/StringUtils';
 import styles from './css/AttachmentGlance.css';
 import ComposerActionCreators from '../action-creators/ComposerActionCreators';
 import AppActionCreators from '../action-creators/AppActionCreators';
@@ -71,9 +72,11 @@ class AttachmentGlance extends React.Component {
           <div className={thumbnailContainerClassName}>
             {attachmentThumbnails.map((thumbnail) =>
               <div
-                src={thumbnail} key={thumbnail}
-                className={styles.thumbnail} role="presentation"
-                style={{ backgroundImage: `url(${thumbnail})` }}
+                src={thumbnail}
+                key={thumbnail}
+                className={styles.thumbnail}
+                role="presentation"
+                style={{ backgroundImage: `url(${escapeParens(thumbnail)})` }}
               />)}
           </div>}
       </div>

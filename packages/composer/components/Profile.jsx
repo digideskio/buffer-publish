@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import AppActionCreators from '../action-creators/AppActionCreators';
 import { Services } from '../AppConstants';
+import { escapeParens } from '../utils/StringUtils';
 import styles from './css/Profile.css';
 import BoardSelector from '../components/BoardSelector';
 import Button from '../components/Button';
@@ -166,7 +167,7 @@ class Profile extends React.Component {
       styles.profileDropdownTrigger;
 
     const profilePictureStyle = {
-      backgroundImage: `url(${profile.images.avatar})`,
+      backgroundImage: `url(${escapeParens(profile.images.avatar)})`,
     };
 
     const selectedText = profile.isSelected ? 'Selected profile' : '';

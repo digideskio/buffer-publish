@@ -144,7 +144,7 @@ const Services = (() => {
     }),
     new Service({
       name: 'linkedin',
-      charLimit: 600,
+      charLimit: 700,
       formattedName: 'LinkedIn',
       unavailableAttachmentTypes: [AttachmentTypes.RETWEET],
       unavailableMediaAttachmentTypes: [MediaTypes.GIF],

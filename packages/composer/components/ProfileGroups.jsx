@@ -1,8 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import AppActionCreators from '../action-creators/AppActionCreators';
 import ProfileGroupItem from '../components/ProfileGroupItem';
 import A from '../components/A';
 import styles from './css/ProfileGroups.css';
+
+const onGroupButtonClick = () => {
+  AppActionCreators.listenToChangeEventsForGroups();
+};
 
 const ProfileGroups = (props) => {
   const { groups, selectedProfilesIds } = props;
@@ -30,6 +35,7 @@ const ProfileGroups = (props) => {
 
       <A
         href={hasGroups ? '/app/edit_groups' : '/app/create_group'}
+        onClick={onGroupButtonClick}
         target="_blank" rel="noreferrer noopener"
         className={createEditGroupButtonClassName}
       >

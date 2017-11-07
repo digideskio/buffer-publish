@@ -11,6 +11,7 @@ import ComposerActionCreators from './ComposerActionCreators';
 import AppStore from '../stores/AppStore';
 import AppHooks from '../utils/lifecycle-hooks';
 import Metrics from '../utils/Metrics';
+import WebSocket from '../utils/WebSocket';
 import ModalActionCreators from '../__legacy-buffer-web-shared-components__/modal/actionCreators';
 import { extractSavedUpdatesIdsFromResponses } from '../utils/APIDataTransforms';
 
@@ -396,6 +397,10 @@ const AppActionCreators = {
     AppDispatcher.handleViewAction({
       actionType: ActionTypes.APP_LOADED,
     });
+  },
+
+  listenToChangeEventsForGroups: () => {
+    WebSocket.init();
   },
 };
 

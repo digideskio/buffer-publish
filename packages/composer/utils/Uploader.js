@@ -12,6 +12,7 @@ import AppStore from '../stores/AppStore';
 import { getFileTypeFromUrl } from './StringUtils';
 import NotificationActionCreators from '../action-creators/NotificationActionCreators';
 import WebAPIUtils from './WebAPIUtils';
+import WebSocket from './WebSocket';
 
 let _xhr = null;
 let _uploadProgressSub = () => {};
@@ -21,6 +22,7 @@ class Uploader {
     return this::uploadToS3(file)
       .then(this::uploadToBuffer)
       .then(this::attachDimensions)
+      .then(this::listenToProcessingEventsForVideos)
       .then(this::formatResponse);
   }
 
@@ -169,6 +171,11 @@ function attachDimensions(response) {
   return WebAPIUtils.getImageDimensions(response.fullsize)
            .then(({ width, height }) => ({ ...response, width, height }))
            .catch(() => response);
+}
+
+function listenToProcessingEventsForVideos(response) {
+  if (response.type === 'video') WebSocket.init();
+  return response;
 }
 
 function formatResponse(response) {

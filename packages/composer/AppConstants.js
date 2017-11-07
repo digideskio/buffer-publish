@@ -327,6 +327,7 @@ const ActionTypes = keyMirror({
   COMPOSER_UPDATE_IMAGE_ALT_TEXT: null,
   COMPOSER_UPDATE_UPLOADED_IMAGE_DIMENSIONS: null,
   COMPOSER_DRAFTS_PREVENT_AUTO_ATTACHING_URLS: null,
+  APP_OPEN_WEB_SOCKET: null,
 });
 
 const AsyncOperationStates = keyMirror({

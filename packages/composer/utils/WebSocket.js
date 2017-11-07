@@ -65,7 +65,7 @@ class WebSocket {
   static PUSHER_AUTH_ENDPOINT = '/pusher_receiver/auth';
 
   static init = (() => {
-    const hasWebSocketConnectionOpen = false; // Only one connection's necessary
+    let hasWebSocketConnectionOpen = false; // Only one connection's necessary
 
     return () => {
       const { appEnvironment } = AppStore.getMetaData();
@@ -90,6 +90,7 @@ class WebSocket {
       }
 
       eventHandlers.forEach((handler, event) => pusherInstance.bind(event, handler));
+      hasWebSocketConnectionOpen = true;
     };
   })();
 

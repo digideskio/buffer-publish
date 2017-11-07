@@ -307,8 +307,6 @@ class App extends React.Component {
       });
     }
 
-    WebSocket.init();
-
     this.isInitialized = true;
   };
 

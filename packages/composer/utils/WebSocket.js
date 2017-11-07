@@ -61,6 +61,7 @@ const eventHandlers = new Map([
 
 class WebSocket {
   static PUSHER_API_KEY = 'bd9ba9324ece3341976e';
+  static PUSHER_CLUSTER = 'mt1';
   static PUSHER_AUTH_ENDPOINT = '/pusher_receiver/auth';
 
   static init = (() => {
@@ -82,7 +83,9 @@ class WebSocket {
 
         // Pusher.channel_auth_endpoint = WebSocket.PUSHER_AUTH_ENDPOINT;
         window.__pusher.channel_auth_endpoint = WebSocket.PUSHER_AUTH_ENDPOINT;
-        const pusher = new Pusher(WebSocket.PUSHER_API_KEY);
+        const pusher = new Pusher(WebSocket.PUSHER_API_KEY, {
+          cluster: WebSocket.PUSHER_CLUSTER,
+        });
         pusherInstance = pusher.subscribe(`private-updates-${userId}`);
       }
 

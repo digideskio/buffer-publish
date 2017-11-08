@@ -116,7 +116,7 @@ const Services = (() => {
     new Service({
       name: 'twitter',
       formattedName: 'Twitter',
-      charLimit: 140,
+      charLimit: 280,
       unavailableAttachmentTypes: [AttachmentTypes.LINK],
       maxAttachableImagesCount: 4,
       profileType: ProfileTypes.ACCOUNT,

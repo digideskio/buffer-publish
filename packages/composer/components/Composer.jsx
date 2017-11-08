@@ -440,7 +440,7 @@ class Composer extends React.Component {
 
     const shouldShowCharacterCount =
       this.isExpanded() && draft.service.charLimit !== null &&
-      draft.service.charLimit - draft.characterCount <= 140;
+      draft.service.charLimit - draft.characterCount <= 280;
 
     const usesImageFirstLayout = draft.service.usesImageFirstLayout;
     const hasSuggestedMedia = this.getSuggestedMedia(true).length > 0;

@@ -19,7 +19,6 @@ class ComposerSection extends React.Component {
     shouldShowInlineSubprofileDropdown: PropTypes.bool.isRequired,
     profiles: PropTypes.array,
     selectedProfiles: PropTypes.array,
-    showTwitterImageDescription: PropTypes.bool.isRequired,
     isOmniboxEnabled: PropTypes.bool,
     composerPosition: PropTypes.object,
   };
@@ -40,8 +39,8 @@ class ComposerSection extends React.Component {
 
     const {
       appState, profiles, visibleNotifications, areAllDraftsSaved, selectedProfiles,
-      shouldEnableFacebookAutocomplete, showTwitterImageDescription,
-      shouldShowInlineSubprofileDropdown, isOmniboxEnabled, composerPosition,
+      shouldEnableFacebookAutocomplete,shouldShowInlineSubprofileDropdown,
+      isOmniboxEnabled, composerPosition,
     } = this.props;
 
     const hasEnabledDrafts = enabledDrafts.length > 0 || isOmniboxEnabled;
@@ -60,7 +59,6 @@ class ComposerSection extends React.Component {
         areAllDraftsSaved={areAllDraftsSaved}
         selectedProfiles={selectedProfiles}
         shouldEnableFacebookAutocomplete={shouldEnableFacebookAutocomplete}
-        showTwitterImageDescription={showTwitterImageDescription}
         shouldShowInlineSubprofileDropdown={shouldShowInlineSubprofileDropdown}
         composerPosition={composerPosition}
       />

@@ -101,7 +101,6 @@ class App extends React.Component {
       shouldDisplayHelpButton: PropTypes.bool.isRequired,
       shouldEnableFacebookAutocomplete: PropTypes.bool.isRequired,
       shouldUseNewTwitterAutocomplete: PropTypes.bool.isRequired,
-      showTwitterImageDescription: PropTypes.bool.isRequired,
       updateId: PropTypes.string,
       scheduledAt: PropTypes.number,
       isPinnedToSlot: PropTypes.bool,
@@ -283,7 +282,7 @@ class App extends React.Component {
     const { availableSchedulesSlotsForDay, metaData, isPinnedToSlot } = this.state;
 
     const {
-      appEnvironment, showTwitterImageDescription, shouldEnableFacebookAutocomplete,
+      appEnvironment, shouldEnableFacebookAutocomplete,
     } = metaData;
 
     const { canSelectProfiles, saveButtons, position = null } = this.props.options;
@@ -396,7 +395,6 @@ class App extends React.Component {
             areAllDraftsSaved={areAllDraftsSaved}
             selectedProfiles={selectedProfiles}
             shouldEnableFacebookAutocomplete={shouldEnableFacebookAutocomplete}
-            showTwitterImageDescription={showTwitterImageDescription}
             composerPosition={position}
           />
 

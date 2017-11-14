@@ -24,7 +24,6 @@ class MediaAttachment extends React.Component {
     visibleNotifications: PropTypes.array.isRequired,
     className: PropTypes.string,
     usesImageFirstLayout: PropTypes.bool,
-    showTwitterImageDescription: PropTypes.bool.isRequired,
     composerPosition: PropTypes.object,
   };
 
@@ -38,7 +37,7 @@ class MediaAttachment extends React.Component {
 
   render() {
     const {
-      images, video, gif, tempImage, draftId, showTwitterImageDescription, maxAttachableImagesCount,
+      images, video, gif, tempImage, draftId, maxAttachableImagesCount,
       fileUploadProgress, service, className, usesImageFirstLayout, composerPosition,
     } = this.props;
 
@@ -76,6 +75,8 @@ class MediaAttachment extends React.Component {
       uploadZone: styles.uploadZone,
       uploadZoneActive: [styles.activeDrop, 'bi bi-add-media'].join(' '),
     };
+
+    const showTwitterImageDescription = draftId === 'twitter';
 
     return (
       <div className={mediaAttachmentClassNames}>

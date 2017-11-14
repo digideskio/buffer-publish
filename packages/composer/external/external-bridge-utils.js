@@ -205,8 +205,6 @@ function extractSerializablePropsFromBufferGlobal(env, bufferGlobal) {
       environment: bufferGlobal.environment,
       should_enable_fb_autocomplete:
         bufferGlobal.data.user.hasFeature('mc_facebook_autocomplete'),
-      should_show_twitter_alt_text:
-        bufferGlobal.data.user.hasFeature('twitter_alt_text'),
       should_use_new_twitter_autocomplete:
         bufferGlobal.data.enabled_application_modes
         .includes('web-twitter-typeahead-autocomplete'),

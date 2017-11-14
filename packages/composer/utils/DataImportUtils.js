@@ -251,7 +251,6 @@ const DataImportUtils = {
         shouldDisplayHelpButton: meta.should_show_help_button,
         shouldEnableFacebookAutocomplete: meta.should_enable_fb_autocomplete,
         shouldUseNewTwitterAutocomplete: meta.should_use_new_twitter_autocomplete,
-        showTwitterImageDescription: meta.should_show_twitter_alt_text,
         text: meta.text || null,
         url: meta.url || null,
         sourceUrl: meta.sourceUrl || null,

@@ -56,6 +56,65 @@ class UploadZone extends React.Component {
     this.uploadFiles(files);
   }
 
+  getUploadableNewFiles = (files) => {
+    const { uploadFormatsConfig } = this.props;
+    const acceptedFiles = [...uploadFormatsConfig.keys()].join(', ');
+
+    let invalidFormatFilesCount = 0;
+
+    const validFiles = files.filter((file) => {
+      const fileNameParts = file.name.split('.');
+      const fileFormat = fileNameParts[fileNameParts.length - 1].toUpperCase();
+
+      if (!uploadFormatsConfig.has(fileFormat)) {
+        invalidFormatFilesCount++;
+        return false;
+      }
+
+      const uploadFormatConfig = uploadFormatsConfig.get(fileFormat);
+      if (file.size > uploadFormatConfig.maxSize) {
+        const formattedMaxSize = getHumanReadableSize(uploadFormatConfig.maxSize);
+        NotificationActionCreators.queueError({
+          scope: NotificationScopes.FILE_UPLOAD,
+          message: `We can't upload "${file.name}" because it's too large: we can only handle files
+                    of that type up to ${formattedMaxSize}. Could you try a smaller file?`,
+        });
+        return false;
+      }
+
+      return true;
+    });
+
+    if (invalidFormatFilesCount > 0) {
+      let message;
+
+      if (invalidFormatFilesCount > 1) {
+        if (invalidFormatFilesCount === files.length) {
+          message = `We can't quite use any of the selected types of files. Could you try one
+                    of the following instead: ${acceptedFiles}?`;
+        } else {
+          message = `We can't quite use some of the selected types of files. Could you try one
+                    of the following instead: ${acceptedFiles}?`;
+        }
+      } else if (invalidFormatFilesCount === 1) {
+        if (files.length > 1) {
+          message = `We can't quite use one of the selected types of files. Could you try one
+                    of the following instead: ${acceptedFiles}?`;
+        } else {
+          message = `We can't quite use that type of file. Could you try one of the
+                    following instead: ${acceptedFiles}?`;
+        }
+      }
+
+      NotificationActionCreators.queueError({
+        scope: NotificationScopes.FILE_UPLOAD,
+        message,
+      });
+    }
+
+    return validFiles;
+  };
+
   uploadFiles = (files) => {
     const { draftId, service } = this.props;
 
@@ -64,44 +123,17 @@ class UploadZone extends React.Component {
       files.splice(service.maxAttachableImagesCount);
     }
 
-    files.forEach((file) => {
-      if (this.isNewFileUploadable(file)) {
+    const uploadableNewFiles = this.getUploadableNewFiles(files);
+
+    if (uploadableNewFiles.length > 0) {
+      uploadableNewFiles.forEach((file) => {
         ComposerActionCreators.uploadDraftFile(draftId, file, this.props.uploadType);
-      }
-    });
+      });
+    }
   }
 
   cleanUpNotifications = () =>
     NotificationActionCreators.removeNotificatonsByScope(NotificationScopes.FILE_UPLOAD);
-
-  isNewFileUploadable = (file) => {
-    const { uploadFormatsConfig } = this.props;
-    const fileNameParts = file.name.split('.');
-    const fileFormat = fileNameParts[fileNameParts.length - 1].toUpperCase();
-    const acceptedFiles = [...uploadFormatsConfig.keys()].join(', ');
-
-    if (!uploadFormatsConfig.has(fileFormat)) {
-      NotificationActionCreators.queueError({
-        scope: NotificationScopes.FILE_UPLOAD,
-        message: `We can't quite use that type of file. Could you try one of the
-                  following instead: ${acceptedFiles}?`,
-
-      });
-      return false;
-    }
-
-    const uploadFormatConfig = uploadFormatsConfig.get(fileFormat);
-    if (file.size > uploadFormatConfig.maxSize) {
-      const formattedMaxSize = getHumanReadableSize(uploadFormatConfig.maxSize);
-      NotificationActionCreators.queueError({
-        scope: NotificationScopes.FILE_UPLOAD,
-        message: `This is all our fault, we can only handle files up to
-                  ${formattedMaxSize}! Could you try a smaller file?`,
-      });
-      return false;
-    }
-    return true;
-  };
 
   render() {
     const transparentClickZoneClassName =

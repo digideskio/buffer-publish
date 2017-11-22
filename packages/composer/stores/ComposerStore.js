@@ -540,7 +540,7 @@ const updateDraftSourceLink = monitorComposerLastInteractedWith(
     const draft = ComposerStore.getDraft(id);
     if (!draft.service.canHaveSourceUrl) return;
 
-    if (url === '') {
+    if (url === '' || url === null) {
       draft.sourceLink = null;
     } else {
       draft.sourceLink = getNewSourceLink(url);

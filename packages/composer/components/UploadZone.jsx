@@ -28,12 +28,14 @@ class UploadZone extends React.Component {
     }),
     uploadFormatsConfig: PropTypes.object,
     disabled: PropTypes.bool,
+    multiple: PropTypes.bool,
     visibleNotifications: PropTypes.array.isRequired,
     uploadType: PropTypes.oneOf(Object.keys(UploadTypes)).isRequired,
   };
 
   static defaultProps = {
     disabled: false,
+    multiple: true,
   };
 
   onClick = (e) => {
@@ -107,6 +109,7 @@ class UploadZone extends React.Component {
           activeClassName={this.props.classNames.uploadZoneActive}
           className={transparentClickZoneClassName}
           ref={(node) => { this.dropzone = node; }}
+          multiple={this.props.multiple}
         />
         <Button
           className={styles.hiddenA11yButton}

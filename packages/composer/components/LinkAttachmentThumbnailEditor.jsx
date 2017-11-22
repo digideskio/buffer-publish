@@ -88,6 +88,7 @@ class LinkAttachmentThumbnailEditor extends React.Component {
           service={this.props.service}
           visibleNotifications={this.props.visibleNotifications}
           uploadType={UploadTypes.LINK_THUMBNAIL}
+          multiple={false}
         />
 
         {areUploadsInProgress &&

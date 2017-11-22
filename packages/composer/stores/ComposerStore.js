@@ -871,14 +871,18 @@ const updateDraftFileUploadProgress = (id, uploaderInstance, progress) => {
 const addDraftImage = monitorComposerLastInteractedWith(
   (id, image) => {
     const draft = ComposerStore.getDraft(id);
-    const hasMaxAttachableImages = draft.images.length >= draft.service.maxAttachableImagesCount;
     const hasAttachedVideo = draft.video !== null;
     const hasAttachedGif = draft.gif != null;
+
+    const currentlyUploadingImagesCount = draft.filesUploadProgress.size;
+    const newImagesOverflow =
+      draft.images.length + currentlyUploadingImagesCount - draft.service.maxAttachableImagesCount;
+    const needsToMakeRoomForNewImages = newImagesOverflow > 0;
 
     if (!draft.service.canHaveAttachmentType(AttachmentTypes.MEDIA)) return;
     if (!draft.service.canHaveMediaAttachmentType(MediaTypes.IMAGE)) return;
 
-    if (hasMaxAttachableImages) draft.images.pop(); // Override last image
+    if (needsToMakeRoomForNewImages) draft.images.splice(-newImagesOverflow, newImagesOverflow);
     if (hasAttachedVideo) draft.video = null; // Override video
     if (hasAttachedGif) draft.gif = null; // Override gif
     updateDraftAttachedMediaEditingPayload(id, null);

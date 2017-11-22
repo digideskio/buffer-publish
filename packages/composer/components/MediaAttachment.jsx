@@ -54,8 +54,8 @@ class MediaAttachment extends React.Component {
 
   render() {
     const {
-      images, video, gif, tempImage, draftId, showTwitterImageDescription, maxAttachableImagesCount,
-      filesUploadProgress, service, className, usesImageFirstLayout, composerPosition, draft,
+      images, video, gif, tempImage, draftId, maxAttachableImagesCount, filesUploadProgress,
+      service, className, usesImageFirstLayout, composerPosition, draft,
     } = this.props;
 
     const shouldDisplayUploadNewButton = (

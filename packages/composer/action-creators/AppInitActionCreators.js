@@ -99,8 +99,8 @@ const loadInitialImageDimensionsKey = (imageDimensionsKey) => {
   });
 };
 
-const dispatchAutoUploadedImage = (url) => new Promise((resolve) => {
-  const isGif = getFileTypeFromPath(url) === 'gif';
+const dispatchAutoUploadedImage = (image) => new Promise((resolve) => {
+  const isGif = getFileTypeFromPath(image.picture) === 'gif';
 
   if (isGif) {
     getStillDataUriFromGif(image.picture)

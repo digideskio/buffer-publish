@@ -41,7 +41,7 @@ class Composer extends React.Component {
     expandedComposerId: PropTypes.string,
     selectedProfiles: PropTypes.array,
     children: PropTypes.node,
-    showTwitterImageDescription: PropTypes.bool.isRequired,
+
     composerPosition: PropTypes.object,
   };
 
@@ -336,7 +336,7 @@ class Composer extends React.Component {
 
     const {
       draft, profiles, visibleNotifications, appState, areAllDraftsSaved,
-      shouldEnableFacebookAutocomplete, children, showTwitterImageDescription,
+      shouldEnableFacebookAutocomplete, children,
       shouldShowInlineSubprofileDropdown, composerPosition,
     } = this.props;
 
@@ -471,7 +471,6 @@ class Composer extends React.Component {
         visibleNotifications={this.props.visibleNotifications}
         className={mediaAttachmentClassName}
         usesImageFirstLayout={usesImageFirstLayout}
-        showTwitterImageDescription={showTwitterImageDescription}
         composerPosition={composerPosition}
       />
     );

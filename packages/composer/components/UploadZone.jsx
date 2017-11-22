@@ -16,7 +16,7 @@ import Button from '../components/Button';
 import styles from './css/UploadZone.css';
 import { getHumanReadableSize } from '../utils/StringUtils';
 import NotificationActionCreators from '../action-creators/NotificationActionCreators';
-import { NotificationScopes, UploadTypes } from '../AppConstants';
+import { NotificationScopes, UploadTypes, Services } from '../AppConstants';
 
 class UploadZone extends React.Component {
   static propTypes = {
@@ -32,6 +32,7 @@ class UploadZone extends React.Component {
     multiple: PropTypes.bool,
     visibleNotifications: PropTypes.array.isRequired,
     uploadType: PropTypes.oneOf(Object.keys(UploadTypes)).isRequired,
+    service: PropTypes.oneOf(Object.values(Services)).isRequired,
   };
 
   static defaultProps = {
@@ -56,7 +57,12 @@ class UploadZone extends React.Component {
   }
 
   uploadFiles = (files) => {
-    const { draftId } = this.props;
+    const { draftId, service } = this.props;
+
+    // Truncate files to upload to the max attachable images count
+    if (files.length > service.maxAttachableImagesCount) {
+      files.splice(service.maxAttachableImagesCount);
+    }
 
     files.forEach((file) => {
       if (this.isNewFileUploadable(file)) {

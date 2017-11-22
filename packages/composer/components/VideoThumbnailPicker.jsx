@@ -4,8 +4,8 @@ import ComposerActionCreators from '../action-creators/ComposerActionCreators';
 import Button from '../components/Button';
 import styles from './css/VideoThumbnailPicker.css';
 
-const onSuggestedThumbnailClick = (draft, video, thumbnail) => {
-  ComposerActionCreators.addDraftVideo(draft.id, { video, thumbnail });
+const onSuggestedThumbnailClick = (draft, thumbnail) => {
+  ComposerActionCreators.updateDraftVideoThumbnail(draft.id, thumbnail);
 };
 
 const onThumbnailMouseOver = (draft, thumbnail) => {
@@ -17,7 +17,7 @@ const onThumbnailMouseOut = (draft) => {
 };
 
 const VideoThumbnailPicker = ({ draft, onMouseOut, className }) => {
-  const { videoThumbnailPickerPayload: video } = draft;
+  const { attachedMediaEditingPayload: video } = draft;
 
   return (
     <div className={`${styles.container} ${className}`} onMouseOut={onMouseOut}>
@@ -26,7 +26,7 @@ const VideoThumbnailPicker = ({ draft, onMouseOut, className }) => {
         {video.availableThumbnails.map((thumbnail) => (
           <Button
             className={thumbnail === video.thumbnail ? `${styles.selectedThumbnailContainer} bi bi-checkmark` : styles.thumbnailContainer}
-            onClick={onSuggestedThumbnailClick.bind(this, draft, video, thumbnail)}
+            onClick={onSuggestedThumbnailClick.bind(this, draft, thumbnail)}
             onMouseOver={onThumbnailMouseOver.bind(this, draft, thumbnail)} // eslint-disable-line
             onMouseMove={onThumbnailMouseOver.bind(this, draft, thumbnail)} // eslint-disable-line
             onMouseOut={onThumbnailMouseOut.bind(this, draft)}

@@ -96,10 +96,14 @@
 .editButton {
   composes: thumbnailFooterItem;
 
-  left: 4px;
+  left: 14px;
+  bottom: 14px;
+  z-index: 1;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
   font-size: 12px;
+  text-align: center;
+  line-height: 23px;
 }
 
 .editButton:hover {

@@ -4,15 +4,18 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FileUploadFormatsConfigs, MediaTypes, UploadTypes } from '../AppConstants';
+import ComposerActionCreators from '../action-creators/ComposerActionCreators';
 import MediaAttachmentThumbnail from '../components/MediaAttachmentThumbnail';
+import VideoThumbnailPicker from '../components/VideoThumbnailPicker';
 import UploadZone from '../components/UploadZone';
 import CircularUploadIndicator from '../components/progress-indicators/CircularUploadIndicator';
-import { FileUploadFormatsConfigs, MediaTypes, UploadTypes } from '../AppConstants';
+import Dropdown, { DropdownTrigger, DropdownContent } from '../components/Dropdown';
 import styles from './css/MediaAttachment.css';
-
 
 class MediaAttachment extends React.Component {
   static propTypes = {
+    draft: PropTypes.object.isRequired,
     draftId: PropTypes.string.isRequired,
     images: PropTypes.array.isRequired,
     video: PropTypes.object,
@@ -36,10 +39,24 @@ class MediaAttachment extends React.Component {
   hasVideoAttached = () => this.props.video !== null;
   hasGifAttached = () => this.props.gif !== null;
 
+  collapseAttachedMediaEditor = () => {
+    ComposerActionCreators.updateDraftAttachedMediaEditingPayload(this.props.draftId, null);
+  }
+
+  expandAttachedMediaEditor = () => {
+    ComposerActionCreators.updateDraftAttachedMediaEditingPayload(this.props.draftId, this.props.video);
+  }
+
+  onVideoEditButtonClick = () => {
+    const isAlreadyEditingMedia = this.props.draft.attachedMediaEditingPayload !== null;
+    const payload = isAlreadyEditingMedia ? null : this.props.video;
+    ComposerActionCreators.updateDraftAttachedMediaEditingPayload(this.props.draftId, payload);
+  };
+
   render() {
     const {
       images, video, gif, tempImage, draftId, showTwitterImageDescription, maxAttachableImagesCount,
-      fileUploadProgress, service, className, usesImageFirstLayout, composerPosition,
+      fileUploadProgress, service, className, usesImageFirstLayout, composerPosition, draft,
     } = this.props;
 
     const shouldDisplayUploadNewButton = (
@@ -77,6 +94,8 @@ class MediaAttachment extends React.Component {
       uploadZoneActive: [styles.activeDrop, 'bi bi-add-media'].join(' '),
     };
 
+    const editButtonClass = `${styles.editButton} bi bi-edit`;
+
     return (
       <div className={mediaAttachmentClassNames}>
         {this.hasImagesAttached() &&
@@ -89,6 +108,25 @@ class MediaAttachment extends React.Component {
               showTwitterImageDescription={showTwitterImageDescription}
               composerPosition={composerPosition}
             />)}
+
+        {this.hasVideoAttached() && (
+          <Dropdown
+            isDropdownExpanded={draft.attachedMediaEditingPayload !== null}
+            onHide={this.collapseAttachedMediaEditor}
+            onShow={this.expandAttachedMediaEditor}
+            className={styles.editButtonContainer}
+          >
+            <DropdownTrigger
+              className={editButtonClass}
+              data-tip="Edit video details"
+              aria-label="Click to edit video details"
+            />
+            <DropdownContent>
+              {draft.attachedMediaEditingPayload !== null &&
+                <VideoThumbnailPicker draft={draft} />}
+            </DropdownContent>
+          </Dropdown>
+        )}
 
         {this.hasVideoAttached() &&
           <MediaAttachmentThumbnail

@@ -331,12 +331,11 @@ const ComposerActionCreators = {
     });
   },
 
-  addDraftVideo: (id, { video, thumbnail = null }) => {
+  addDraftVideo: (id, video) => {
     AppDispatcher.handleViewAction({
       actionType: ActionTypes.COMPOSER_ADD_DRAFT_VIDEO,
       id,
       video,
-      thumbnail,
     });
   },
 
@@ -351,6 +350,14 @@ const ComposerActionCreators = {
   updateDraftLinkThumbnail: (id, thumbnail) => {
     AppDispatcher.handleViewAction({
       actionType: ActionTypes.COMPOSER_UPDATE_DRAFT_LINK_THUMBNAIL,
+      id,
+      thumbnail,
+    });
+  },
+
+  updateDraftVideoThumbnail: (id, thumbnail) => {
+    AppDispatcher.handleViewAction({
+      actionType: ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_THUMBNAIL,
       id,
       thumbnail,
     });
@@ -409,19 +416,11 @@ const ComposerActionCreators = {
     });
   },
 
-  updateDraftVideoThumbnailPickerPayload: (id, video) => {
+  updateDraftAttachedMediaEditingPayload: (id, media) => {
     AppDispatcher.handleViewAction({
-      actionType: ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_THUMB_PICKER_PAYLOAD,
+      actionType: ActionTypes.COMPOSER_UPDATE_DRAFT_ATTACHED_MEDIA_EDITING_PAYLOAD,
       id,
-      video,
-    });
-  },
-
-  updateDraftVideoThumbnailPickerPayloadThumbnail: (id, thumbnail) => {
-    AppDispatcher.handleViewAction({
-      actionType: ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_THUMB_PICKER_PAYLOAD_THUMB,
-      id,
-      thumbnail,
+      media,
     });
   },
 

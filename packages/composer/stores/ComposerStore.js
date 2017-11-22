@@ -38,7 +38,7 @@ const getNewDraft = (service) => ({
   images: [], // Media Attachment (type: image), data structure in getNewImage()
   availableImages: [],
   video: null, // Media Attachment (type: video); data structure in getNewVideo()
-  videoThumbnailPickerPayload: null, // Video data used when actively picking a thumbnail
+  attachedMediaEditingPayload: null, // Referrence to the media object being actively edited
   gif: null, // Media Attachment (type: gif); data structure in getNewGif()
   retweet: null, // Data structure in getNewRetweet()
   characterCount: service.charLimit === null ? null : 0, // Only updated for services w/ char limit
@@ -878,6 +878,7 @@ const addDraftImage = monitorComposerLastInteractedWith(
     if (hasMaxAttachableImages) draft.images.pop(); // Override last image
     if (hasAttachedVideo) draft.video = null; // Override video
     if (hasAttachedGif) draft.gif = null; // Override gif
+    updateDraftAttachedMediaEditingPayload(id, null);
 
     draft.images.push(image);
 
@@ -894,6 +895,13 @@ const updateDraftLinkThumbnail = monitorComposerLastInteractedWith(
 
     // TODO: merge updateDraftLinkThumbnail() into updateDraftLinkData()
     draft.link.wasEdited = true;
+  }
+);
+
+const updateDraftVideoThumbnail = monitorComposerLastInteractedWith(
+  (id, thumbnail) => {
+    const draft = ComposerStore.getDraft(id);
+    draft.video.thumbnail = thumbnail;
   }
 );
 
@@ -1032,7 +1040,7 @@ const updateUploadedImageDimensions = (url, width, height) => {
  * using === to establish if we're looking at the same video or not.
  */
 const addDraftVideo = monitorComposerLastInteractedWith(
-  (id, { video, thumbnail = null }) => {
+  (id, video) => {
     const draft = ComposerStore.getDraft(id);
     const hasAttachedImages = draft.images.length > 0;
     const hasAttachedVideo = draft.video !== null;
@@ -1044,10 +1052,9 @@ const addDraftVideo = monitorComposerLastInteractedWith(
     if (hasAttachedImages) draft.images.splice(0); // Override images
     if (hasAttachedVideo) draft.video = null; // Override video
     if (hasAttachedGif) draft.gif = null;
+    updateDraftAttachedMediaEditingPayload(id, null);
 
     draft.video = cloneDeep(video);
-    draft.videoThumbnailPickerPayload = null;
-    if (thumbnail !== null) draft.video.thumbnail = thumbnail;
 
     ComposerActionCreators.draftVideoAdded(id, video);
     ComposerActionCreators.updateDraftCharacterCount(id, { didEditorStateChange: false });
@@ -1067,7 +1074,7 @@ const finishAddingProcessedVideo = (videoData) => {
   const draftId = processingVideos.get(videoData.uploadId);
   const video = getNewVideo(videoData);
 
-  addDraftVideo(draftId, { video });
+  addDraftVideo(draftId, video);
   addSharedUploadedVideo(video);
   updateDraftFileUploadProgress(draftId, null);
 };
@@ -1075,6 +1082,7 @@ const finishAddingProcessedVideo = (videoData) => {
 const removeDraftVideo = monitorComposerLastInteractedWith(
   (id) => {
     ComposerStore.getDraft(id).video = null;
+    updateDraftAttachedMediaEditingPayload(id, null);
     ComposerActionCreators.updateDraftCharacterCount(id, { didEditorStateChange: false });
   }
 );
@@ -1090,7 +1098,9 @@ const addDraftGif = monitorComposerLastInteractedWith(
 
     if (hasAttachedImages) draft.images.splice(0); // Override images
     if (hasAttachedVideo) draft.video = null; // Override video
+    updateDraftAttachedMediaEditingPayload(id, null);
     draft.gif = gif;
+
     ComposerActionCreators.draftGifAdded(id, gif.url);
     ComposerActionCreators.updateDraftCharacterCount(id, { didEditorStateChange: false });
   }
@@ -1131,6 +1141,7 @@ const addAutoUploadedGif = (url, stillGifUrl) => {
 const removeDraftGif = monitorComposerLastInteractedWith(
   (id) => {
     ComposerStore.getDraft(id).gif = null;
+    updateDraftAttachedMediaEditingPayload(id, null);
     ComposerActionCreators.updateDraftCharacterCount(id, { didEditorStateChange: false });
   }
 );
@@ -1160,12 +1171,8 @@ const removeDraftTempImage = (id, url = null) => {
   }
 };
 
-const updateDraftVideoThumbnailPickerPayload = (id, video) => {
-  ComposerStore.getDraft(id).videoThumbnailPickerPayload = video;
-};
-
-const updateDraftVideoThumbnailPickerPayloadThumbnail = (id, thumbnail) => {
-  ComposerStore.getDraft(id).videoThumbnailPickerPayload.thumbnail = thumbnail;
+const updateDraftAttachedMediaEditingPayload = (id, media) => {
+  ComposerStore.getDraft(id).attachedMediaEditingPayload = media;
 };
 
 const addDraftRetweet = (id, retweetData) => {
@@ -1334,7 +1341,7 @@ const copyDraftMedia = (draftFrom, draftTo) => {
       addOmniNotice(message, draftTo.id);
       return;
     }
-    addDraftVideo(draftTo.id, { video: draftFrom.video });
+    addDraftVideo(draftTo.id, draftFrom.video);
     enableDraftAttachment(draftTo.id, AttachmentTypes.MEDIA);
   }
 };
@@ -1517,6 +1524,10 @@ const onDispatchedPayload = function(payload) {
       updateDraftLinkThumbnail(action.id, action.thumbnail);
       break;
 
+    case ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_THUMBNAIL:
+      updateDraftVideoThumbnail(action.id, action.thumbnail);
+      break;
+
     case ActionTypes.COMPOSER_ADD_DRAFTS_IMAGE:
       state.drafts.forEach((draft) => addDraftImage(draft.id, action.image));
       break;
@@ -1546,7 +1557,7 @@ const onDispatchedPayload = function(payload) {
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFT_VIDEO:
-      addDraftVideo(action.id, { video: action.video, thumbnail: action.thumbnail });
+      addDraftVideo(action.id, action.video);
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFT_GIF:
@@ -1577,12 +1588,8 @@ const onDispatchedPayload = function(payload) {
       removeDraftTempImage(action.id);
       break;
 
-    case ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_THUMB_PICKER_PAYLOAD:
-      updateDraftVideoThumbnailPickerPayload(action.id, action.video);
-      break;
-
-    case ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_THUMB_PICKER_PAYLOAD_THUMB:
-      updateDraftVideoThumbnailPickerPayloadThumbnail(action.id, action.thumbnail);
+    case ActionTypes.COMPOSER_UPDATE_DRAFT_ATTACHED_MEDIA_EDITING_PAYLOAD:
+      updateDraftAttachedMediaEditingPayload(action.id, action.media);
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFTS_RETWEET:
@@ -1712,7 +1719,7 @@ const onDispatchedPayload = function(payload) {
     case ActionTypes.COMPOSER_ADD_DRAFTS_AUTO_UPLOADED_VIDEO:
       video = getNewVideo(action.video);
       addSharedUploadedVideo(video);
-      state.drafts.forEach((draft) => addDraftVideo(draft.id, { video }));
+      state.drafts.forEach((draft) => addDraftVideo(draft.id, video));
       break;
 
     case ActionTypes.COMPOSER_DRAFTS_PREVENT_AUTO_ATTACHING_URLS:

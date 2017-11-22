@@ -65,7 +65,6 @@ class MediaAttachmentThumbnail extends React.Component {
     const thumbnail = isVideo ? media.thumbnail : media.url;
 
     const videoThumbnailClass = `${styles.videoThumbnail} bi bi-video`;
-    const editButtonClass = `${styles.editButton} bi bi-edit`;
     const tooltipCopy = (isRegularImage && showTwitterImageDescription) ?
       'Click to expand & add description' : 'Click to expand';
     const ariaLabel = (isRegularImage && showTwitterImageDescription) ?
@@ -83,14 +82,6 @@ class MediaAttachmentThumbnail extends React.Component {
           {isVideo &&
             <span className={videoThumbnailClass} aria-label="video attachment" />}
         </Button>
-
-        {isVideo && (
-          <Button
-            className={editButtonClass}
-            data-tip="Edit video details"
-            aria-label="Click to edit video details"
-          />
-        )}
 
         <CloseButton
           className={styles.closeButton} onClick={this.onCloseButtonClick} label="Remove media"

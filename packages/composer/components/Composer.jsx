@@ -459,6 +459,7 @@ class Composer extends React.Component {
 
     const composerMediaAttachment = (
       <MediaAttachment
+        draft={draft}
         draftId={draft.id}
         tempImage={draft.tempImage}
         images={draft.images}
@@ -495,7 +496,6 @@ class Composer extends React.Component {
 
     const composerSuggestedMediaBox = (
       <SuggestedMediaBox
-        draft={draft}
         draftId={draft.id}
         suggestedMedia={this.getSuggestedMedia(true)}
         className={suggestedMediaBoxClassName}

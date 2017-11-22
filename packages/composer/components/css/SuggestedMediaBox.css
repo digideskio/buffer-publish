@@ -158,8 +158,7 @@
 	box-shadow: 0 0 0 var(--thumbnail-shadow-width) var(--blue-color-primary-hue);
 }
 
-.thumbnailContainer:hover,
-.videoThumbnailPickerButton:hover + .thumbnailContainer {
+.thumbnailContainer:hover {
   box-shadow: 0 0 0 var(--thumbnail-shadow-width) var(--blue-color-primary-hue);
 }
 
@@ -243,36 +242,4 @@
 
 .imgDataContainer:hover {
   z-index: 2;
-}
-
-.videoThumbnailPickerButton {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  z-index: var(--video-attachment-thumbnail-selector-button-zindex);
-  width: 14.5px;
-  height: 14px;
-  padding: 3px;
-  line-height: 8px;
-  font-size: 11px;
-  font-weight: 700;
-  border: 0;
-  border-radius: 2px;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.95);
-  color: var(--primary-font-color);
-  outline: none;
-}
-
-.videoThumbnailPickerButton::before {
-  content: "Ⅲ";
-}
-
-.activeVideoThumbnailPickerButton {
-  composes: videoThumbnailPickerButton;
-}
-
-.videoThumbnailPickerButton:hover,
-.activeVideoThumbnailPickerButton {
-  background: #fff;
 }

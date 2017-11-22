@@ -32,9 +32,9 @@
 
 .container {
   position: absolute;
-  top: -86px;
   left: 8px;
-  right: 8px;
+  bottom: 100%;
+  width: 577px;
   z-index: var(--video-attachment-thumbnail-selector-zindex);
   height: calc(var(--thumbnail-height) + var(--thumbnail-shadow-width) * 2 + var(--header-height));
   margin: 0 calc(var(--thumbnail-shadow-width)/2) -var(--thumbnail-shadow-width) -var(--thumbnail-shadow-width);

@@ -9,7 +9,6 @@ import throttle from 'lodash.throttle';
 import ComposerActionCreators from '../action-creators/ComposerActionCreators';
 import AppActionCreators from '../action-creators/AppActionCreators';
 import { MediaTypes } from '../AppConstants';
-import VideoThumbnailPicker from './VideoThumbnailPicker';
 import Button from '../components/Button';
 import SuggestedMediaThumbnailInfo from './SuggestedMediaThumbnailInfo';
 import styles from './css/SuggestedMediaBox.css';
@@ -18,7 +17,6 @@ import { getHumanReadableSize, getHumanReadableTime } from '../utils/StringUtils
 
 class SuggestedMediaBox extends React.Component {
   static propTypes = {
-    draft: PropTypes.object.isRequired,
     draftId: PropTypes.string.isRequired,
     suggestedMedia: PropTypes.array.isRequired,
     className: PropTypes.string,
@@ -34,7 +32,6 @@ class SuggestedMediaBox extends React.Component {
     this.state = {
       canScrollLeft: false,
       canScrollRight: false,
-      wasSuggestedVideoThumbnailsPickerOpenFromMouseMove: null,
     };
   }
 
@@ -55,7 +52,7 @@ class SuggestedMediaBox extends React.Component {
         break;
 
       case MediaTypes.VIDEO:
-        ComposerActionCreators.addDraftVideo(this.props.draftId, { video: media });
+        ComposerActionCreators.addDraftVideo(this.props.draftId, media);
         break;
 
       case MediaTypes.GIF:
@@ -74,34 +71,13 @@ class SuggestedMediaBox extends React.Component {
   onThumbnailMouseOver = (media) => {
     const tempImage = media.mediaType === MediaTypes.VIDEO ? media.thumbnail : media.url;
     ComposerActionCreators.updateDraftTempImage(this.props.draftId, tempImage);
-
-    if (
-      media.mediaType === MediaTypes.VIDEO &&
-      this.state.wasSuggestedVideoThumbnailsPickerOpenFromMouseMove === null
-    ) {
-      ComposerActionCreators.updateDraftVideoThumbnailPickerPayload(this.props.draftId, media);
-      this.setState({ wasSuggestedVideoThumbnailsPickerOpenFromMouseMove: true });
-    }
-  };
-
-  onVideoThumbnailPickerMouseOut = (e) => {
-    if (
-      this.state.wasSuggestedVideoThumbnailsPickerOpenFromMouseMove &&
-      !e.relatedTarget.closest('.videoThumbnailPicker')
-    ) {
-      ComposerActionCreators.updateDraftVideoThumbnailPickerPayload(this.props.draftId, null);
-      this.setState({ wasSuggestedVideoThumbnailsPickerOpenFromMouseMove: null });
-    }
   };
 
   onThumbnailMouseOut = (e) => {
     ComposerActionCreators.removeDraftTempImage(this.props.draftId);
-    this.onVideoThumbnailPickerMouseOut(e);
   };
 
-  onVideoAvailableThumbnailClick = () => { this.state.isVideoThumbnailPickerVisible = false; };
-
-  getSuggestedMediaItem = ({ suggestedItem }) => {
+  getSuggestedMediaItem = (suggestedItem) => {
     const mediaType = suggestedItem.mediaType;
     let suggestedMediaItem;
     const hasDimensionsData = suggestedItem.width && suggestedItem.height;
@@ -222,13 +198,8 @@ class SuggestedMediaBox extends React.Component {
   }, 100);
 
   render() {
-    const { draft, suggestedMedia, className } = this.props;
+    const { suggestedMedia, className } = this.props;
     const { canScrollLeft, canScrollRight } = this.state;
-
-    const showVideoThumbnailPicker = (
-      draft.videoThumbnailPickerPayload !== null &&
-      draft.videoThumbnailPickerPayload.availableThumbnails.length > 1
-    );
 
     const suggestedMediaBoxContainerClassName = [
       styles.suggestedMediaBoxContainer,
@@ -247,13 +218,6 @@ class SuggestedMediaBox extends React.Component {
 
     return (
       <div className={suggestedMediaBoxContainerClassName}>
-        {showVideoThumbnailPicker &&
-          <VideoThumbnailPicker
-            draft={draft}
-            onMouseOut={this.onVideoThumbnailPickerMouseOut}
-            className="videoThumbnailPicker"
-          />}
-
         <div className={styles.suggestedMediaBox}>
           <div className={styles.header} role="heading">
             {`Suggested media (${suggestedMedia.length}):`}
@@ -277,7 +241,7 @@ class SuggestedMediaBox extends React.Component {
               onScroll={this.updateScrollButtonsDisplay}
             >
               {[...suggestedMedia].map((suggestedItem) => (
-                this.getSuggestedMediaItem({ suggestedItem, draft })
+                this.getSuggestedMediaItem(suggestedItem)
               ))}
             </div>
           </div>

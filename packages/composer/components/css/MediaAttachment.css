@@ -178,3 +178,14 @@
   width: var(--image-first-dimension);
   margin: 0;
 }
+
+.editButtonContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.editButton {
+  composes: editButton from './MediaAttachmentThumbnail.css';
+}

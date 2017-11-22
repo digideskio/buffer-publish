@@ -36,13 +36,11 @@ class LinkAttachmentThumbnailEditor extends React.Component {
     const scrollLeftButtonClassName = [
       styles.scrollLeftButton,
       'bi bi-arrow-left',
-      styles.scrollButton,
     ].join(' ');
 
     const scrollRightButtonClassName = [
       styles.scrollRightButton,
       'bi bi-arrow-right',
-      styles.scrollButton,
     ].join(' ');
 
     const progressIndicatorClassName = { container: styles.progressIndicator };
@@ -64,7 +62,8 @@ class LinkAttachmentThumbnailEditor extends React.Component {
 
     const uploadZoneClassNames = {
       uploadZone: uploadZoneClassName,
-      uploadZoneActive: styles.activeDrop,
+      uploadZoneActive: styles.uploadZoneActive,
+      uploadZoneDisabled: styles.uploadZoneDisabled,
     };
 
     const thumbnailStyles =
@@ -89,6 +88,7 @@ class LinkAttachmentThumbnailEditor extends React.Component {
           visibleNotifications={this.props.visibleNotifications}
           uploadType={UploadTypes.LINK_THUMBNAIL}
           multiple={false}
+          disabled={areUploadsInProgress}
         />
 
         {areUploadsInProgress &&

@@ -68,7 +68,7 @@
   justify-content: center;
 }
 
-.activeDrop {
+.uploadButtonUIActiveDrop {
   composes: uploadButtonUI;
   position: absolute;
   margin: 0;
@@ -83,12 +83,12 @@
 }
 
 .uploadButtonUI:hover,
-.activeDrop {
+.uploadButtonUIActiveDrop {
   border-color: var(--blue-color-primary-hue);
 }
 
 .uploadButtonUI:hover::before,
-.activeDrop::before {
+.uploadButtonUIActiveDrop::before {
   color: var(--blue-color-primary-hue);
 }
 
@@ -115,6 +115,10 @@
   bottom: 0;
   left: 0;
   border: var(--upload-button-ui-padding) solid #fff;
+}
+
+.uploadButtonUIDisabled {
+  cursor: not-allowed;
 }
 
 .tempImageContainer {
@@ -147,6 +151,8 @@
   z-index: var(--media-attachment-upload-zone-zindex);
   top: -1px;
   left: -1px;
+  right: -1px;
+  bottom: -1px;
   border-radius: 3px;
 }
 

@@ -9,6 +9,7 @@
   primary-font-color: primary-font-color;
   link-attachment-thumbnail-upload-progress-indicator-zindex: link-attachment-thumbnail-upload-progress-indicator-zindex;
   link-attachment-thumbnail-upload-zone-zindex: link-attachment-thumbnail-upload-zone-zindex;
+  link-attachment-thumbnail-upload-disabled-overlay-zindex: link-attachment-thumbnail-upload-disabled-overlay-zindex;
   link-attachment-thumbnail-scroll-button-zindex: link-attachment-thumbnail-scroll-button-zindex;
 }
 
@@ -22,6 +23,7 @@
   --link-attachment-thumbnail-upload-progress-indicator-zindex: link-attachment-thumbnail-upload-progress-indicator-zindex;
   --link-attachment-thumbnail-scroll-button-zindex: link-attachment-thumbnail-scroll-button-zindex;
   --link-attachment-thumbnail-upload-zone-zindex: link-attachment-thumbnail-upload-zone-zindex;
+  --link-attachment-thumbnail-upload-disabled-overlay-zindex: link-attachment-thumbnail-upload-disabled-overlay-zindex;
   --primary-bg-color: primary-bg-color;
   --primary-font-color: primary-font-color;
   --border-radius: 3px;
@@ -44,29 +46,6 @@
   text-align: center;
 }
 
-.scrollLeftButton {
-  border: solid 1px #e6ebef;
-  border-radius: 0;
-  border-top-right-radius: 2px;
-  border-bottom-right-radius: 2px;
-  border-left: none;
-  left: 0;
-}
-
-.scrollRightButton {
-  border: solid 1px #e6ebef;
-  border-radius: 0;
-  right: 0px;
-  border-top-left-radius: 2px;
-  border-bottom-left-radius: 2px;
-  border-right: none;
-}
-
-.scrollLeftButton:before {
-  right: 2px;
-  position: relative;
-}
-
 .scrollButton {
 	position: absolute;
 	display: inline-block;
@@ -81,10 +60,8 @@
   z-index: var(--link-attachment-thumbnail-scroll-button-zindex);
   background-color: var(--primary-bg-color);
   box-sizing: border-box;
-}
-
-.scrollButton:focus {
-  outline: none;
+  border: solid 1px #e6ebef;
+  border-radius: 0;
 }
 
 .scrollButton::before {
@@ -93,6 +70,33 @@
 
 .scrollButton:hover {
   color: var(--blue-color-primary-hue);
+}
+
+.scrollButton:focus {
+  outline: none;
+}
+
+.scrollLeftButton {
+  composes: scrollButton;
+
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-left: none;
+  left: 0;
+}
+
+.scrollRightButton {
+  composes: scrollButton;
+
+  right: 0px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+  border-right: none;
+}
+
+.scrollLeftButton::before {
+  right: 2px;
+  position: relative;
 }
 
 .thumbnail {
@@ -133,11 +137,11 @@
   cursor: pointer;
 }
 
-.noSuggestedImages:hover:after {
+.noSuggestedImages:hover::after {
   color: var(--blue-color-primary-hue);
 }
 
-.noSuggestedImages:after {
+.noSuggestedImages::after {
   content: "Upload Image";
   font-size: 12px;
   color: var(--primary-font-color);
@@ -146,11 +150,11 @@
   position: relative;
 }
 
-.noSuggestedImages:before {
+.noSuggestedImages::before {
   color: var(--primary-font-color);
 }
 
-.noSuggestedImages:hover:before {
+.noSuggestedImages:hover::before {
   color: var(--blue-color-primary-hue);
 }
 
@@ -167,15 +171,15 @@
   color: var(--blue-color-primary-hue);
 }
 
-.uploadZone:before {
+.uploadZone::before {
   font-size: 16px;
   top: 43px;
   position: relative;
   left: 5px;
 }
 
-.uploadInProgress:before,
-.uploadInProgress:after {
+.uploadInProgress::before,
+.uploadInProgress::after {
   visibility: hidden;
 }
 
@@ -184,7 +188,8 @@
   opacity: 1;
 }
 
-.uploadZone:hover:after {
+.uploadZone:hover::after,
+.uploadZoneActive::after {
   content: "Upload Image";
   font-size: 12px;
   display: block;
@@ -192,26 +197,13 @@
   position: relative;
 }
 
-.activeDrop {
+.uploadZoneActive {
   background: white;
   opacity: 0.9;
   color: var(--blue-color-primary-hue);
 }
 
-.activeDrop:after {
-  content: "Upload Image";
-  font-size: 12px;
-  display: block;
-  top: 44px;
-  position: relative;
-}
-
-.disabledButton {
-  border-color: #d7e1e6;
-  color: #ced7df;
-  cursor: default;
-}
-
-.disabledButton:hover {
-  color: #ced7df;
+.uploadZoneDisabled {
+  z-index: var(--link-attachment-thumbnail-upload-disabled-overlay-zindex);
+  cursor: not-allowed;
 }

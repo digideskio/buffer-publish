@@ -25,6 +25,7 @@ class UploadZone extends React.Component {
     classNames: PropTypes.shape({
       uploadZone: PropTypes.string,
       uploadZoneActive: PropTypes.string,
+      uploadZoneDisabled: PropTypes.string,
     }),
     uploadFormatsConfig: PropTypes.object,
     disabled: PropTypes.bool,
@@ -38,13 +39,16 @@ class UploadZone extends React.Component {
     multiple: true,
   };
 
-  onClick = (e) => {
+  onHiddenA11yButtonClick = () => {
     const { disabled } = this.props;
     if (disabled) return;
     this.dropzone.open();
   };
 
   onDrop = (files) => {
+    const { disabled } = this.props;
+    if (disabled) return;
+
     this.cleanUpNotifications();
     if (files.length === 0) return;
 
@@ -107,13 +111,15 @@ class UploadZone extends React.Component {
         <Dropzone
           onDrop={this.onDrop}
           activeClassName={this.props.classNames.uploadZoneActive}
+          disabledClassName={this.props.classNames.uploadZoneDisabled}
           className={transparentClickZoneClassName}
           ref={(node) => { this.dropzone = node; }}
           multiple={this.props.multiple}
+          disabled={this.props.disabled}
         />
         <Button
           className={styles.hiddenA11yButton}
-          onClick={this.onClick}
+          onClick={this.onHiddenA11yButtonClick}
           title="Upload media"
         />
       </div>

@@ -92,7 +92,8 @@ class MediaAttachment extends React.Component {
 
     const uploadZoneClassNames = {
       uploadZone: styles.uploadZone,
-      uploadZoneActive: [styles.activeDrop, 'bi bi-add-media'].join(' '),
+      uploadZoneActive: [styles.uploadButtonUIActiveDrop, 'bi bi-add-media'].join(' '),
+      uploadZoneDisabled: styles.uploadButtonUIDisabled,
     };
 
     const editButtonClass = `${styles.editButton} bi bi-edit`;
@@ -153,7 +154,11 @@ class MediaAttachment extends React.Component {
           />}
 
         {shouldDisplayUploadNewButton &&
-          <div className={uploadNewButtonUIClassName} data-tip={uploadNewButtonTooltipCopy}>
+          <div
+            className={uploadNewButtonUIClassName}
+            data-tip={uploadNewButtonTooltipCopy}
+            data-tip-disable={areUploadsInProgress}
+          >
             {tempImage && !areUploadsInProgress &&
               <div className={styles.tempImageContainer}>
                 <img alt="" src={tempImage} className={styles.tempImage} />
@@ -167,6 +172,7 @@ class MediaAttachment extends React.Component {
               visibleNotifications={this.props.visibleNotifications}
               uploadType={UploadTypes.MEDIA}
               multiple={maxAttachableImagesCount > 1}
+              disabled={areUploadsInProgress}
             />
 
             {areUploadsInProgress &&

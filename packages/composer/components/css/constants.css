@@ -49,6 +49,7 @@
   link-attachment-thumbnail-upload-progress-indicator-zindex: 10;
   link-attachment-thumbnail-upload-zone-zindex: 10;
   link-attachment-thumbnail-scroll-button-zindex: 10;
+  link-attachment-thumbnail-upload-disabled-overlay-zindex: 11;
   composer-section-zindex: 20;
   composer-text-editor-zindex: 20;
   composer-text-editor-overlay-zindex: 30;

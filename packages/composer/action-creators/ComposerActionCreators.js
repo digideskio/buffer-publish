@@ -8,7 +8,7 @@ import Uploader from '../utils/Uploader';
 import NotificationActionCreators from '../action-creators/NotificationActionCreators';
 import AppActionCreators from '../action-creators/AppActionCreators';
 import { getStillDataUriFromGif } from '../utils/DOMUtils';
-import { getFileTypeFromUrl } from '../utils/StringUtils';
+import { getFileTypeFromPath } from '../utils/StringUtils';
 
 const ComposerActionCreators = {
 
@@ -462,7 +462,7 @@ const ComposerActionCreators = {
           });
 
           AppActionCreators.trackUserAction(['composer', 'thumbnail', 'uploaded_file'], {
-            extension: getFileTypeFromUrl(uploadedFile.url),
+            extension: getFileTypeFromPath(uploadedFile.url),
           });
         } else {
           switch (uploadedFile.type) {
@@ -477,7 +477,7 @@ const ComposerActionCreators = {
                 height: uploadedFile.height,
               });
               AppActionCreators.trackUserAction(['composer', 'media', 'uploaded', 'photo'], {
-                extension: getFileTypeFromUrl(uploadedFile.url),
+                extension: getFileTypeFromPath(uploadedFile.url),
               });
               AppActionCreators.trackUserAction(['composer', 'media', 'added_photo'], {
                 addedFrom: 'upload',
@@ -522,7 +522,7 @@ const ComposerActionCreators = {
                   });
                 });
               AppActionCreators.trackUserAction(['composer', 'media', 'uploaded', 'photo'], {
-                extension: getFileTypeFromUrl(uploadedFile.url),
+                extension: getFileTypeFromPath(uploadedFile.url),
               });
               AppActionCreators.trackUserAction(['composer', 'media', 'added_photo'], {
                 addedFrom: 'upload',

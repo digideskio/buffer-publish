@@ -9,7 +9,7 @@ import Request from '@bufferapp/buffer-js-request';
 import RPCClient from 'micro-rpc-client';
 import { MediaUploadConfig, MediaTypes, NotificationScopes } from '../AppConstants';
 import AppStore from '../stores/AppStore';
-import { getFileTypeFromUrl } from './StringUtils';
+import { getFileTypeFromPath } from './StringUtils';
 import NotificationActionCreators from '../action-creators/NotificationActionCreators';
 import WebAPIUtils from './WebAPIUtils';
 import WebSocket from './WebSocket';
@@ -176,7 +176,7 @@ function formatResponse(response) {
   let formattedResponse;
   switch (response.type) {
     case 'photo':
-      if (getFileTypeFromUrl(response.fullsize) === 'gif') {
+      if (getFileTypeFromPath(response.fullsize) === 'gif') {
         formattedResponse = {
           type: MediaTypes.GIF,
           url: response.fullsize,

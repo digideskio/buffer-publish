@@ -5,7 +5,7 @@ import { ActionTypes, AttachmentTypes, NotificationScopes } from '../AppConstant
 import AppHooks from '../utils/lifecycle-hooks';
 import AppActionCreators from '../action-creators/AppActionCreators';
 import NotificationActionCreators from '../action-creators/NotificationActionCreators';
-import { getFileTypeFromUrl } from '../utils/StringUtils';
+import { getFileTypeFromPath } from '../utils/StringUtils';
 import { getStillDataUriFromGif } from '../utils/DOMUtils';
 import AppStore from '../stores/AppStore';
 import { observeStore } from '../utils/StoreUtils';
@@ -99,8 +99,8 @@ const loadInitialImageDimensionsKey = (imageDimensionsKey) => {
   });
 };
 
-const dispatchAutoUploadedImage = (image) => new Promise((resolve) => {
-  const isGif = getFileTypeFromUrl(image.picture) === 'gif';
+const dispatchAutoUploadedImage = (url) => new Promise((resolve) => {
+  const isGif = getFileTypeFromPath(url) === 'gif';
 
   if (isGif) {
     getStillDataUriFromGif(image.picture)

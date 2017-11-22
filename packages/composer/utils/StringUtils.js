@@ -18,9 +18,9 @@ const getHumanReadableTime = (unformattedSeconds) => {
   return `${minutes}:${seconds}`;
 };
 
-const getFileTypeFromUrl = (fileUrl) => {
-  const indexOfExtension = fileUrl.lastIndexOf('.');
-  return fileUrl.substr(indexOfExtension + 1);
+const getFileTypeFromPath = (path) => {
+  const fileNameParts = path.split('.');
+  return fileNameParts[fileNameParts.length - 1];
 };
 
 /**
@@ -63,6 +63,6 @@ const cachedParensRegex = /(\(|\))/g;
 const escapeParens = (str) => str.replace(cachedParensRegex, '\\$1');
 
 export {
-  getHumanReadableSize, getHumanReadableTime, getFileTypeFromUrl, getAbsoluteUrl,
-  generateUniqueId, getUnicodeAwareLength, makeUnicodeAwareIndexUnaware, escapeParens,
+  getHumanReadableSize, getHumanReadableTime, getFileTypeFromPath, escapeParens,
+  getAbsoluteUrl, generateUniqueId, getUnicodeAwareLength, makeUnicodeAwareIndexUnaware,
 };

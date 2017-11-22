@@ -11,12 +11,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Dropzone from 'react-dropzone';
+import preventXss from 'xss';
 import ComposerActionCreators from '../action-creators/ComposerActionCreators';
 import Button from '../components/Button';
 import styles from './css/UploadZone.css';
-import { getHumanReadableSize } from '../utils/StringUtils';
+import { getHumanReadableSize, getFileTypeFromPath } from '../utils/StringUtils';
 import NotificationActionCreators from '../action-creators/NotificationActionCreators';
-import { NotificationScopes, UploadTypes, Services } from '../AppConstants';
+import { NotificationScopes, UploadTypes, MediaTypes, Services, ContentTypeMediaTypeMap }
+  from '../AppConstants';
 
 class UploadZone extends React.Component {
   static propTypes = {
@@ -58,13 +60,11 @@ class UploadZone extends React.Component {
 
   getUploadableNewFiles = (files) => {
     const { uploadFormatsConfig } = this.props;
-    const acceptedFiles = [...uploadFormatsConfig.keys()].join(', ');
 
     let invalidFormatFilesCount = 0;
 
     const validFiles = files.filter((file) => {
-      const fileNameParts = file.name.split('.');
-      const fileFormat = fileNameParts[fileNameParts.length - 1].toUpperCase();
+      const fileFormat = getFileTypeFromPath(file.name).toUpperCase();
 
       if (!uploadFormatsConfig.has(fileFormat)) {
         invalidFormatFilesCount++;
@@ -76,8 +76,9 @@ class UploadZone extends React.Component {
         const formattedMaxSize = getHumanReadableSize(uploadFormatConfig.maxSize);
         NotificationActionCreators.queueError({
           scope: NotificationScopes.FILE_UPLOAD,
-          message: `We can't upload "${file.name}" because it's too large: we can only handle files
-                    of that type up to ${formattedMaxSize}. Could you try a smaller file?`,
+          message: `We can't upload "${preventXss(file.name)}" because it's too large: we can
+                    only handle files of that type up to ${formattedMaxSize}. Could you try
+                    a smaller file?`,
         });
         return false;
       }
@@ -86,23 +87,24 @@ class UploadZone extends React.Component {
     });
 
     if (invalidFormatFilesCount > 0) {
+      const acceptedFilesText = [...uploadFormatsConfig.keys()].join(', ');
       let message;
 
       if (invalidFormatFilesCount > 1) {
         if (invalidFormatFilesCount === files.length) {
           message = `We can't quite use any of the selected types of files. Could you try one
-                    of the following instead: ${acceptedFiles}?`;
+                    of the following instead: ${acceptedFilesText}?`;
         } else {
           message = `We can't quite use some of the selected types of files. Could you try one
-                    of the following instead: ${acceptedFiles}?`;
+                    of the following instead: ${acceptedFilesText}?`;
         }
       } else if (invalidFormatFilesCount === 1) {
         if (files.length > 1) {
           message = `We can't quite use one of the selected types of files. Could you try one
-                    of the following instead: ${acceptedFiles}?`;
+                    of the following instead: ${acceptedFilesText}?`;
         } else {
           message = `We can't quite use that type of file. Could you try one of the
-                    following instead: ${acceptedFiles}?`;
+                    following instead: ${acceptedFilesText}?`;
         }
       }
 
@@ -117,6 +119,26 @@ class UploadZone extends React.Component {
 
   uploadFiles = (files) => {
     const { draftId, service } = this.props;
+
+    const fileMediaTypes = files.map((file) => (
+      ContentTypeMediaTypeMap.get(getFileTypeFromPath(file.name).toUpperCase())
+    ));
+    const uniqueFileMediaTypes = [...new Set(fileMediaTypes)].filter((v) => !!v);
+    const containsMixedMediaTypes = uniqueFileMediaTypes.length > 1;
+
+    if (containsMixedMediaTypes) {
+      NotificationActionCreators.queueError({
+        scope: NotificationScopes.FILE_UPLOAD,
+        message: service.maxAttachableImagesCount > 1 ?
+          `We can only attach one type of file at the same time: either images,
+          ${service.canHaveMediaAttachmentType(MediaTypes.GIF) && 'or a gif,'}
+          or a video.<br/>Could you try with only one of those?` :
+          `We can only attach one type of file at the same time: either an image,
+          ${service.canHaveMediaAttachmentType(MediaTypes.GIF) && 'or a gif,'}
+          or a video.<br/>Could you try with only one of those?`,
+      });
+      return;
+    }
 
     // Truncate files to upload to the max attachable images count
     if (files.length > service.maxAttachableImagesCount) {

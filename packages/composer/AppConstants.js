@@ -402,6 +402,16 @@ const FileUploadFormatsConfigs = (() => {
   return FileUploadFormatsConfigsMap;
 })();
 
+const ContentTypeMediaTypeMap = new Map([
+  ['JPG', 'IMAGE'],
+  ['JPEG', 'IMAGE'],
+  ['PNG', 'IMAGE'],
+  ['GIF', 'GIF'],
+  ['MOV', 'VIDEO'],
+  ['MP4', 'VIDEO'],
+  ['AVI', 'VIDEO'],
+]);
+
 const MediaUploadConfig = {
   endpoint: '/upload/media',
 };
@@ -418,5 +428,5 @@ export {
   NotificationTypes, NotificationScopes, FileUploadFormatsConfigs, MediaUploadConfig,
   MediaTypes, AppEnvironments, UploadTypes, ComposerInitiators, LinkAttachmentTextFieldTypes,
   FloatingErrorCodes, ErrorTypes, SaveButtonTypes, InlineSaveButtonTypes, ButtonsQueuingTypesMap,
-  DataImportEnvironments, bufferOrigins, bufferOriginRegex,
+  DataImportEnvironments, ContentTypeMediaTypeMap, bufferOrigins, bufferOriginRegex,
 };

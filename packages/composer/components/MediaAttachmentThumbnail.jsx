@@ -61,13 +61,11 @@ class MediaAttachmentThumbnail extends React.Component {
     const { media, className, showTwitterImageDescription } = this.props;
     const thumbnailClassName = [styles.thumbnail, className].join(' ');
     const isVideo = media.mediaType === MediaTypes.VIDEO;
-    const videoThumbnailClass = [
-      'bi bi-video',
-      styles.videoThumbnail,
-    ].join(' ');
+    const isRegularImage = media.mediaType === MediaTypes.IMAGE;
     const thumbnail = isVideo ? media.thumbnail : media.url;
 
-    const isRegularImage = media.mediaType === MediaTypes.IMAGE;
+    const videoThumbnailClass = `${styles.videoThumbnail} bi bi-video`;
+    const editButtonClass = `${styles.editButton} bi bi-edit`;
     const tooltipCopy = (isRegularImage && showTwitterImageDescription) ?
       'Click to expand & add description' : 'Click to expand';
     const ariaLabel = (isRegularImage && showTwitterImageDescription) ?
@@ -83,9 +81,17 @@ class MediaAttachmentThumbnail extends React.Component {
           style={{ backgroundImage: `url(${escapeParens(thumbnail)})` }}
         >
           {isVideo &&
-            <span className={videoThumbnailClass} aria-label="video attachment" />
-          }
+            <span className={videoThumbnailClass} aria-label="video attachment" />}
         </Button>
+
+        {isVideo && (
+          <Button
+            className={editButtonClass}
+            data-tip="Edit video details"
+            aria-label="Click to edit video details"
+          />
+        )}
+
         <CloseButton
           className={styles.closeButton} onClick={this.onCloseButtonClick} label="Remove media"
         />

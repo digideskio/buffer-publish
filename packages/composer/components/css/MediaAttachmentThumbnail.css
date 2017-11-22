@@ -75,17 +75,41 @@
   z-index: var(--close-button-background-zindex);
 }
 
-.videoThumbnail {
-  color: white;
+.thumbnailFooterItem {
   position: absolute;
-  left: 4px;
   bottom: 4px;
+  box-sizing: border-box;
+  width: 22px;
+  height: 22px;
   padding: 0 4px;
+  color: #fff;
   background: var(--outerspace);
   border-radius: 3px;
+  border-width: 0;
 }
 
-.videoThumbnail:before {
+.thumbnailFooterItem::before {
   position: relative;
   top: -1px;
+}
+
+.editButton {
+  composes: thumbnailFooterItem;
+
+  left: 4px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  font-size: 12px;
+}
+
+.editButton:hover {
+  transform: scale(1.15);
+}
+
+.videoThumbnail {
+  composes: thumbnailFooterItem;
+
+  left: 27px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }

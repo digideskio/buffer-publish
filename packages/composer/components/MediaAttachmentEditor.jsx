@@ -1,67 +1,91 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import ImagesLoadEvents from '@bufferapp/react-images-loaded';
 import ComposerActionCreators from '../action-creators/ComposerActionCreators';
 import Button from '../components/Button';
 import Input from '../components/Input';
+import { scrollIntoView } from '../utils/DOMUtils';
 import styles from './css/MediaAttachmentEditor.css';
 
-const onSuggestedThumbnailClick = (draft, thumbnail) => {
-  ComposerActionCreators.updateDraftVideoThumbnail(draft.id, thumbnail);
-};
+class MediaAttachmentEditor extends React.Component {
+  static propTypes = {
+    draft: PropTypes.object.isRequired,
+    onMouseOut: PropTypes.func,
+    className: PropTypes.string,
+  };
 
-const onTitleChange = (draft, e) => {
-  ComposerActionCreators.updateDraftVideoTitle(draft.id, e.target.value);
-};
+  static defaultProps = {
+    onMouseOut: () => {},
+    className: '',
+  };
 
-const onThumbnailMouseOver = (draft, thumbnail) => {
-  ComposerActionCreators.updateDraftTempImage(draft.id, thumbnail);
-};
+  onAllThumbnailImagesLoadEvents = () => {
+    scrollIntoView({
+      el: this.selectedThumbnailEl,
+      ref: this.scrollContainerEl,
+      axis: 'horizontal',
+      padding: 25,
+    });
+  }
 
-const onThumbnailMouseOut = (draft) => {
-  ComposerActionCreators.removeDraftTempImage(draft.id);
-};
+  onSuggestedThumbnailClick = (draft, thumbnail) => {
+    ComposerActionCreators.updateDraftVideoThumbnail(draft.id, thumbnail);
+  };
 
-const MediaAttachmentEditor = ({ draft, onMouseOut, className }) => {
-  const { attachedMediaEditingPayload: video } = draft;
+  onTitleChange = (draft, e) => {
+    ComposerActionCreators.updateDraftVideoTitle(draft.id, e.target.value);
+  };
 
-  return (
-    <div className={`${styles.container} ${className}`} onMouseOut={onMouseOut}>
-      <label className={styles.header} htmlFor="video-title-input">Title:</label>
-      <Input
-        type="text"
-        value={video.name}
-        onChange={onTitleChange.bind(this, draft)}
-        id="video-title-input"
-        className={styles.input}
-      />
-      <p className={styles.header}>Thumbnail:</p>
-      <div className={styles.scrollContainer}>
-        {video.availableThumbnails.map((thumbnail) => (
-          <Button
-            className={thumbnail === video.thumbnail ? `${styles.selectedThumbnailContainer} bi bi-checkmark` : styles.thumbnailContainer}
-            onClick={onSuggestedThumbnailClick.bind(this, draft, thumbnail)}
-            onMouseOver={onThumbnailMouseOver.bind(this, draft, thumbnail)} // eslint-disable-line
-            onMouseMove={onThumbnailMouseOver.bind(this, draft, thumbnail)} // eslint-disable-line
-            onMouseOut={onThumbnailMouseOut.bind(this, draft)}
-            key={thumbnail}
-          >
-            <img src={thumbnail} className={styles.thumbnail} alt="Suggested thumbnail for video" />
-          </Button>
-        ))}
+  onThumbnailMouseOver = (draft, thumbnail) => {
+    ComposerActionCreators.updateDraftTempImage(draft.id, thumbnail);
+  };
+
+  onThumbnailMouseOut = (draft) => {
+    ComposerActionCreators.removeDraftTempImage(draft.id);
+  };
+
+  render() {
+    const { draft, onMouseOut, className } = this.props;
+    const { attachedMediaEditingPayload: video } = draft;
+
+    return (
+      <div className={`${styles.container} ${className}`} onMouseOut={onMouseOut}>
+        <label className={styles.header} htmlFor="video-title-input">Title:</label>
+        <Input
+          type="text"
+          value={video.name}
+          onChange={this.onTitleChange.bind(this, draft)}
+          id="video-title-input"
+          className={styles.input}
+        />
+        <p className={styles.header}>Thumbnail:</p>
+        <div
+          className={styles.scrollContainer}
+          ref={(ref) => { this.scrollContainerEl = ref; }}
+        >
+          <ImagesLoadEvents onAlways={this.onAllThumbnailImagesLoadEvents}>
+            {video.availableThumbnails.map((thumbnail) => (
+              <Button
+                className={thumbnail === video.thumbnail ? `${styles.selectedThumbnailContainer} bi bi-checkmark` : styles.thumbnailContainer}
+                ref={(ref) => { if (thumbnail === video.thumbnail) this.selectedThumbnailEl = ref; }}
+                onClick={this.onSuggestedThumbnailClick.bind(this, draft, thumbnail)}
+                onMouseOver={this.onThumbnailMouseOver.bind(this, draft, thumbnail)} // eslint-disable-line
+                onMouseMove={this.onThumbnailMouseOver.bind(this, draft, thumbnail)} // eslint-disable-line
+                onMouseOut={this.onThumbnailMouseOut.bind(this, draft)}
+                key={thumbnail}
+              >
+                <img
+                  src={thumbnail}
+                  className={styles.thumbnail}
+                  alt="Suggested thumbnail for video"
+                />
+              </Button>
+            ))}
+          </ImagesLoadEvents>
+        </div>
       </div>
-    </div>
-  );
-};
-
-MediaAttachmentEditor.propTypes = {
-  draft: PropTypes.object.isRequired,
-  onMouseOut: PropTypes.func,
-  className: PropTypes.string,
-};
-
-MediaAttachmentEditor.defaultProps = {
-  onMouseOut: () => {},
-  className: '',
-};
+    );
+  }
+}
 
 export default MediaAttachmentEditor;

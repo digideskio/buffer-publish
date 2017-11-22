@@ -166,6 +166,7 @@ class MediaAttachment extends React.Component {
               service={this.props.service}
               visibleNotifications={this.props.visibleNotifications}
               uploadType={UploadTypes.MEDIA}
+              multiple={maxAttachableImagesCount > 1}
             />
 
             {areUploadsInProgress &&

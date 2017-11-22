@@ -189,3 +189,9 @@
 .editButton {
   composes: editButton from './MediaAttachmentThumbnail.css';
 }
+
+.editDropdownContent {
+  top: 0;
+  left: 0;
+  bottom: 0;
+}

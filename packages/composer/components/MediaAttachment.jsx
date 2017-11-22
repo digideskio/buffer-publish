@@ -121,7 +121,7 @@ class MediaAttachment extends React.Component {
               data-tip="Edit video details"
               aria-label="Click to edit video details"
             />
-            <DropdownContent>
+            <DropdownContent className={styles.editDropdownContent}>
               {draft.attachedMediaEditingPayload !== null &&
                 <MediaAttachmentEditor draft={draft} onSubmit={this.collapseAttachedMediaEditor} />}
             </DropdownContent>

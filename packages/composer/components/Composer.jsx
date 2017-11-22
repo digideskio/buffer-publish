@@ -467,7 +467,7 @@ class Composer extends React.Component {
         gif={draft.gif}
         service={draft.service}
         maxAttachableImagesCount={draft.service.maxAttachableImagesCount}
-        fileUploadProgress={draft.fileUploadProgress}
+        filesUploadProgress={draft.filesUploadProgress}
         visibleNotifications={this.props.visibleNotifications}
         className={mediaAttachmentClassName}
         usesImageFirstLayout={usesImageFirstLayout}
@@ -629,7 +629,7 @@ class Composer extends React.Component {
             <LinkAttachment
               link={draft.link} draftId={draft.id}
               service={draft.service} visibleNotifications={this.props.visibleNotifications}
-              fileUploadProgress={draft.fileUploadProgress}
+              filesUploadProgress={draft.filesUploadProgress}
             />}
 
           {this.isExpanded() && shouldShowRetweetAttachment &&

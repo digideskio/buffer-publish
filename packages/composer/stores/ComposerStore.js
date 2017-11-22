@@ -43,7 +43,7 @@ const getNewDraft = (service) => ({
   retweet: null, // Data structure in getNewRetweet()
   characterCount: service.charLimit === null ? null : 0, // Only updated for services w/ char limit
   isEnabled: false,
-  fileUploadProgress: null, // 0-100, or null if no upload in progress
+  filesUploadProgress: new Map(), // Map of uploaderInstance <> integer(0-100)
   enabledAttachmentType:
     (service.canHaveAttachmentType(AttachmentTypes.MEDIA) &&
      !service.canHaveAttachmentType(AttachmentTypes.LINK)) ?
@@ -121,7 +121,7 @@ const getInitialState = () => ({
   draftsSharedData: {
     uploadedImages: [],
     uploadedGifs: [],
-    processingVideos: new Map(), // uploadId => drafId
+    processingVideos: new Map(), // uploadId <> [drafId, uploaderInstance]
     uploadedVideos: [],
   },
   meta: {
@@ -861,8 +861,11 @@ const updateDraftLinkData = monitorComposerLastInteractedWith(
   }
 );
 
-const updateDraftFileUploadProgress = (id, progress) => {
-  ComposerStore.getDraft(id).fileUploadProgress = progress;
+const updateDraftFileUploadProgress = (id, uploaderInstance, progress) => {
+  const { filesUploadProgress } = ComposerStore.getDraft(id);
+
+  if (progress !== null) filesUploadProgress.set(uploaderInstance, progress);
+  else filesUploadProgress.delete(uploaderInstance);
 };
 
 const addDraftImage = monitorComposerLastInteractedWith(
@@ -1084,12 +1087,12 @@ const finishAddingProcessedVideo = (videoData) => {
 
   if (!processingVideos.has(videoData.uploadId)) return;
 
-  const draftId = processingVideos.get(videoData.uploadId);
+  const [draftId, uploaderInstance] = processingVideos.get(videoData.uploadId);
   const video = getNewVideo(videoData);
 
   addDraftVideo(draftId, video);
   addSharedUploadedVideo(video);
-  updateDraftFileUploadProgress(draftId, null);
+  updateDraftFileUploadProgress(draftId, uploaderInstance, null);
 };
 
 const removeDraftVideo = monitorComposerLastInteractedWith(
@@ -1159,8 +1162,8 @@ const removeDraftGif = monitorComposerLastInteractedWith(
   }
 );
 
-const addDraftProcessingVideo = (draftId, uploadId) => {
-  state.draftsSharedData.processingVideos.set(uploadId, draftId);
+const addDraftProcessingVideo = (draftId, uploaderInstance, uploadId) => {
+  state.draftsSharedData.processingVideos.set(uploadId, [draftId, uploaderInstance]);
 };
 
 // This method can be called very often (onMouseMove), so make sure the store
@@ -1678,31 +1681,31 @@ const onDispatchedPayload = function(payload) {
 
     case ActionTypes.COMPOSER_DRAFT_FILE_UPLOAD_STARTED:
       monitorComposerLastInteractedWith(() => {
-        updateDraftFileUploadProgress(action.id, 0);
+        updateDraftFileUploadProgress(action.id, action.uploaderInstance, 0);
       })();
       break;
 
     case ActionTypes.COMPOSER_DRAFT_FILE_UPLOAD_PROGRESS:
-      updateDraftFileUploadProgress(action.id, action.progress);
+      updateDraftFileUploadProgress(action.id, action.uploaderInstance, action.progress);
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFT_UPLOADED_IMAGE:
       addDraftUploadedImage(action.id, action.url, action.width, action.height);
-      updateDraftFileUploadProgress(action.id, null);
+      updateDraftFileUploadProgress(action.id, action.uploaderInstance, null);
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFT_UPLOADED_LINK_THUMBNAIL:
       addDraftUploadedLinkThumbnail(action.id, action.url, action.width, action.height);
-      updateDraftFileUploadProgress(action.id, null);
+      updateDraftFileUploadProgress(action.id, action.uploaderInstance, null);
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFT_UPLOADED_VIDEO:
-      addDraftProcessingVideo(action.id, action.uploadId, action.name);
+      addDraftProcessingVideo(action.id, action.uploaderInstance, action.uploadId);
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFT_UPLOADED_GIF:
       addDraftUploadedGif(action.id, action.url, action.stillGifUrl, action.width, action.height);
-      updateDraftFileUploadProgress(action.id, null);
+      updateDraftFileUploadProgress(action.id, action.uploaderInstance, null);
       break;
 
     case ActionTypes.COMPOSER_VIDEO_PROCESSED:

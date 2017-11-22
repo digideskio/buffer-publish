@@ -18,7 +18,7 @@ class LinkAttachmentThumbnailEditor extends React.Component {
     draftId: PropTypes.string.isRequired,
     selectedThumbnail: PropTypes.object,
     availableThumbnails: PropTypes.array,
-    fileUploadProgress: PropTypes.number,
+    filesUploadProgress: PropTypes.instanceOf(Map),
     visibleNotifications: PropTypes.array,
     service: PropTypes.object,
     hasThumbnail: PropTypes.bool,
@@ -31,7 +31,7 @@ class LinkAttachmentThumbnailEditor extends React.Component {
     ComposerActionCreators.selectNextLinkThumbnail(this.props.draftId);
 
   render() {
-    const { selectedThumbnail, fileUploadProgress, availableThumbnails } = this.props;
+    const { selectedThumbnail, filesUploadProgress, availableThumbnails } = this.props;
 
     const scrollLeftButtonClassName = [
       styles.scrollLeftButton,
@@ -48,15 +48,18 @@ class LinkAttachmentThumbnailEditor extends React.Component {
     const progressIndicatorClassName = { container: styles.progressIndicator };
 
     const uploadFormatsConfig = new Map(FileUploadFormatsConfigs.IMAGE);
-    const isUploadInProgress = fileUploadProgress !== null;
     const hasThumbnail = selectedThumbnail !== null;
     const hasMoreThanOneThumbnail = availableThumbnails !== null && availableThumbnails.length > 1;
+
+    const areUploadsInProgress = filesUploadProgress.size > 0;
+    const totalUploadsProgress = areUploadsInProgress &&
+      Array.from(filesUploadProgress.values()).reduce((a, b) => a + b) / filesUploadProgress.size;
 
     const uploadZoneClassName = [
       'bi bi-add-media',
       styles.uploadZone,
       hasThumbnail ? '' : styles.noSuggestedImages,
-      isUploadInProgress ? styles.uploadInProgress : '',
+      areUploadsInProgress ? styles.uploadInProgress : '',
     ].join(' ');
 
     const uploadZoneClassNames = {
@@ -65,7 +68,7 @@ class LinkAttachmentThumbnailEditor extends React.Component {
     };
 
     const thumbnailStyles =
-      isUploadInProgress ? styles.uploadingThumbnail : styles.thumbnail;
+      areUploadsInProgress ? styles.uploadingThumbnail : styles.thumbnail;
 
 
     return (
@@ -74,7 +77,8 @@ class LinkAttachmentThumbnailEditor extends React.Component {
           <div
             className={thumbnailStyles}
             style={{ backgroundImage: `url(${escapeParens(selectedThumbnail.url)})` }}
-            role="img" aria-label="Link Thumbnail"
+            role="img"
+            aria-label="Link Thumbnail"
           />}
 
         <UploadZone
@@ -86,10 +90,12 @@ class LinkAttachmentThumbnailEditor extends React.Component {
           uploadType={UploadTypes.LINK_THUMBNAIL}
         />
 
-        {isUploadInProgress &&
+        {areUploadsInProgress &&
           <CircularUploadIndicator
-            size={54} progress={this.props.fileUploadProgress} showText
+            size={54}
+            progress={totalUploadsProgress}
             classNames={progressIndicatorClassName}
+            showText
           />}
 
         {hasMoreThanOneThumbnail &&

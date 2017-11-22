@@ -16,7 +16,7 @@ class MediaAttachmentThumbnail extends React.Component {
     media: PropTypes.object.isRequired,
     showTwitterImageDescription: PropTypes.bool.isRequired,
     composerPosition: PropTypes.object,
-    canEditVideoAttachment: React.PropTypes.bool,
+    canEditVideoAttachment: PropTypes.bool,
   };
 
   static defaultProps = {

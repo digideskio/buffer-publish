@@ -433,14 +433,15 @@ const ComposerActionCreators = {
   },
 
   uploadDraftFile: (id, file, uploadType) => {
-    if (Uploader.isUploading()) Uploader.abort(); // Only one concurrent upload for now: abort first
+    const uploader = new Uploader();
 
     AppDispatcher.handleViewAction({
       actionType: ActionTypes.COMPOSER_DRAFT_FILE_UPLOAD_STARTED,
       id,
+      uploaderInstance: uploader,
     });
 
-    Uploader.upload(file)
+    uploader.upload(file)
       .then((uploadedFile) => {
         if (uploadedFile.success === false) {
           NotificationActionCreators.queueError({
@@ -454,6 +455,7 @@ const ComposerActionCreators = {
           AppDispatcher.handleViewAction({
             actionType: ActionTypes.COMPOSER_ADD_DRAFT_UPLOADED_LINK_THUMBNAIL,
             id,
+            uploaderInstance: uploader,
             url: uploadedFile.url,
             width: uploadedFile.width,
             height: uploadedFile.height,
@@ -468,6 +470,7 @@ const ComposerActionCreators = {
               AppDispatcher.handleViewAction({
                 actionType: ActionTypes.COMPOSER_ADD_DRAFT_UPLOADED_IMAGE,
                 id,
+                uploaderInstance: uploader,
                 url: uploadedFile.url,
                 location,
                 width: uploadedFile.width,
@@ -486,8 +489,8 @@ const ComposerActionCreators = {
               AppDispatcher.handleViewAction({
                 actionType: ActionTypes.COMPOSER_ADD_DRAFT_UPLOADED_VIDEO,
                 id,
+                uploaderInstance: uploader,
                 uploadId: uploadedFile.uploadId,
-                name: uploadedFile.name,
               });
               AppActionCreators.trackUserAction(['composer', 'media', 'uploaded', 'video'], {
                 extension: uploadedFile.fileExtension,
@@ -500,6 +503,7 @@ const ComposerActionCreators = {
                   AppDispatcher.handleViewAction({
                     actionType: ActionTypes.COMPOSER_ADD_DRAFT_UPLOADED_GIF,
                     id,
+                    uploaderInstance: uploader,
                     url: uploadedFile.url,
                     stillGifUrl: dataUri,
                     width: uploadedFile.width,
@@ -510,6 +514,7 @@ const ComposerActionCreators = {
                   AppDispatcher.handleViewAction({
                     actionType: ActionTypes.COMPOSER_ADD_DRAFT_UPLOADED_GIF,
                     id,
+                    uploaderInstance: uploader,
                     url: uploadedFile.url,
                     stillGifUrl: null,
                     width: uploadedFile.width,
@@ -538,7 +543,7 @@ const ComposerActionCreators = {
         });
       });
 
-    ComposerActionCreators.monitorDraftFileUploadProgress(id);
+    ComposerActionCreators.monitorDraftFileUploadProgress(id, uploader);
   },
 
   updateImageAltText: (image, altText) => {
@@ -549,8 +554,8 @@ const ComposerActionCreators = {
     });
   },
 
-  monitorDraftFileUploadProgress: async (id) => {
-    const progressIterator = Uploader.getProgressIterator();
+  monitorDraftFileUploadProgress: async (id, uploaderInstance) => {
+    const progressIterator = uploaderInstance.getProgressIterator();
     let item;
 
     while (!(item = progressIterator.next()).done) { // eslint-disable-line no-cond-assign
@@ -560,6 +565,7 @@ const ComposerActionCreators = {
         AppDispatcher.handleViewAction({
           actionType: ActionTypes.COMPOSER_DRAFT_FILE_UPLOAD_PROGRESS,
           id,
+          uploaderInstance,
           progress,
         });
       });

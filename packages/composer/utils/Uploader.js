@@ -14,101 +14,105 @@ import NotificationActionCreators from '../action-creators/NotificationActionCre
 import WebAPIUtils from './WebAPIUtils';
 import WebSocket from './WebSocket';
 
-let _xhr = null;
-let _uploadProgressSub = () => {};
-
 class Uploader {
-  static upload(file) {
-    return this::uploadToS3(file)
+  constructor() {
+    this._xhr = null;
+    this._uploadProgressSub = () => {};
+  }
+
+  upload(file) {
+    return this.uploadToS3(file)
       .then(this::uploadToBuffer)
       .then(this::attachDimensions)
       .then(this::listenToProcessingEventsForVideos)
       .then(this::formatResponse);
   }
 
-  static abort() {
-    if (!Uploader.isUploading()) return;
-
-    _xhr.abort();
-    _xhr = null;
-    _uploadProgressSub(0);
-  }
-
-  static getProgressIterator() {
+  getProgressIterator() {
     const progressGenerator = function* () {
-      while (Uploader.isUploading()) {
+      while (this.isUploading()) {
         // eslint-disable-next-line no-loop-func
-        yield new Promise((resolve) => { _uploadProgressSub = resolve; });
+        yield new Promise((resolve) => { this._uploadProgressSub = resolve; });
       }
     };
 
-    return progressGenerator();
+    return this::progressGenerator();
   }
 
-  static isUploading = () => _xhr !== null;
+  isUploading = () => this._xhr !== null;
+
+  uploadToS3(file) {
+    const formData = new FormData();
+
+    const { id: userId, s3UploadSignature: userS3UploadSignature } = AppStore.getUserData();
+    const url = `https://${userS3UploadSignature.bucket}.s3.amazonaws.com`;
+
+    this._xhr = new XMLHttpRequest(); // Use XHR to have access to a progress callback
+    this._uploadProgressSub = () => {};
+
+    const timestamp = Date.now();
+    const encodedFileName = encodeURIComponent(file.name);
+
+    const data = [
+      ['key', `${userId}/uploads/${timestamp}-${encodedFileName}`],
+      ['Content-Type', 'video/mp4'], // Doesn't really matter for this first upload to S3
+      ['acl', 'public-read'],
+      ['success_action_status', userS3UploadSignature.successActionStatus],
+      ['policy', userS3UploadSignature.base64Policy],
+      ['X-amz-algorithm', userS3UploadSignature.algorithm],
+      ['X-amz-credential', userS3UploadSignature.credentials],
+      ['X-amz-date', userS3UploadSignature.date],
+      ['X-amz-expires', userS3UploadSignature.expires],
+      ['X-amz-signature', userS3UploadSignature.signature],
+      ['file', file],
+    ];
+
+    data.forEach(([key, val]) => formData.append(key, val));
+
+    const promise = new Promise((resolve) => {
+      this._xhr.open('POST', url, true);
+
+      this._xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+      this._xhr.addEventListener('readystatechange', () => {
+        if (this._xhr.readyState === 4 && (this._xhr.status === 200 || this._xhr.status === 201)) {
+          const uploadKey = this._xhr.responseXML.getElementsByTagName('Key')[0].textContent;
+          resolve(uploadKey);
+
+          this._xhr = null;
+          this._uploadProgressSub(100);
+        }
+      });
+
+      this._xhr.addEventListener('error', () => {
+        NotificationActionCreators.queueError({
+          scope: NotificationScopes.FILE_UPLOAD,
+          message: 'Uh oh! It looks like we had trouble connecting to our servers, mind trying again?',
+        });
+      });
+
+      this._xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable) {
+          const progress = e.loaded / e.total * 100;
+          this._uploadProgressSub(progress);
+        }
+      });
+
+      this._xhr.send(formData);
+    });
+
+    return promise;
+  }
 }
 
-function uploadToS3(file) {
-  const formData = new FormData();
+function attachDimensions(response) {
+  if (response.type !== 'photo') {
+    return response;
+  }
 
-  const { id: userId, s3UploadSignature: userS3UploadSignature } = AppStore.getUserData();
-  const url = `https://${userS3UploadSignature.bucket}.s3.amazonaws.com`;
-
-  _xhr = new XMLHttpRequest(); // Use XHR to have access to a progress callback
-  _uploadProgressSub = () => {};
-
-  const timestamp = Date.now();
-  const encodedFileName = encodeURIComponent(file.name);
-
-  const data = [
-    ['key', `${userId}/uploads/${timestamp}-${encodedFileName}`],
-    ['Content-Type', 'video/mp4'], // Doesn't really matter for this first upload to S3
-    ['acl', 'public-read'],
-    ['success_action_status', userS3UploadSignature.successActionStatus],
-    ['policy', userS3UploadSignature.base64Policy],
-    ['X-amz-algorithm', userS3UploadSignature.algorithm],
-    ['X-amz-credential', userS3UploadSignature.credentials],
-    ['X-amz-date', userS3UploadSignature.date],
-    ['X-amz-expires', userS3UploadSignature.expires],
-    ['X-amz-signature', userS3UploadSignature.signature],
-    ['file', file],
-  ];
-
-  data.forEach(([key, val]) => formData.append(key, val));
-
-  const promise = new Promise((resolve) => {
-    _xhr.open('POST', url, true);
-
-    _xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-
-    _xhr.addEventListener('readystatechange', () => {
-      if (_xhr.readyState === 4 && (_xhr.status === 200 || _xhr.status === 201)) {
-        const uploadKey = _xhr.responseXML.getElementsByTagName('Key')[0].textContent;
-        resolve(uploadKey);
-
-        _xhr = null;
-        _uploadProgressSub(100);
-      }
-    });
-
-    _xhr.addEventListener('error', () => {
-      NotificationActionCreators.queueError({
-        scope: NotificationScopes.FILE_UPLOAD,
-        message: 'Uh oh! It looks like we had trouble connecting to our servers, mind trying again?',
-      });
-    });
-
-    _xhr.upload.addEventListener('progress', (e) => {
-      if (e.lengthComputable) {
-        const progress = e.loaded / e.total * 100;
-        _uploadProgressSub(progress);
-      }
-    });
-
-    _xhr.send(formData);
-  });
-
-  return promise;
+  return WebAPIUtils.getImageDimensions(response.fullsize)
+    .then(({ width, height }) => ({ ...response, width, height }))
+    .catch(() => response);
 }
 
 function uploadToBuffer(uploadKey) {
@@ -161,16 +165,6 @@ function uploadToBuffer(uploadKey) {
              }
              return response;
            });
-}
-
-function attachDimensions(response) {
-  if (response.type !== 'photo') {
-    return response;
-  }
-
-  return WebAPIUtils.getImageDimensions(response.fullsize)
-           .then(({ width, height }) => ({ ...response, width, height }))
-           .catch(() => response);
 }
 
 function listenToProcessingEventsForVideos(response) {

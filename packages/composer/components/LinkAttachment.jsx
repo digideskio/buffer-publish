@@ -22,7 +22,7 @@ class LinkAttachment extends React.Component {
     link: PropTypes.object.isRequired,
     service: PropTypes.object,
     visibleNotifications: PropTypes.array,
-    fileUploadProgress: PropTypes.number,
+    filesUploadProgress: PropTypes.instanceOf(Map),
   };
 
   onCloseButtonClick = () => {
@@ -35,11 +35,11 @@ class LinkAttachment extends React.Component {
   };
 
   render() {
-    const { link, draftId, service, visibleNotifications, fileUploadProgress } = this.props;
+    const { link, draftId, service, visibleNotifications, filesUploadProgress } = this.props;
     const canEditLinkAttachment = service.canEditLinkAttachment;
     const hasTitle = link.title !== null;
     const hasDescription = link.description !== null;
-    const isUploadInProgress = fileUploadProgress !== null;
+    const areUploadsInProgress = filesUploadProgress.size > 0;
     const absoluteUrl = getAbsoluteUrl(link.url);
     const domainOnlyUrl =
       link.url.replace('http://', '')
@@ -52,7 +52,7 @@ class LinkAttachment extends React.Component {
       <div className={styles.linkAttachment}>
         <LinkAttachmentThumbnail
           thumbnail={link.thumbnail}
-          isUploadInProgress={isUploadInProgress}
+          isUploadInProgress={areUploadsInProgress}
         />
 
         {canEditLinkAttachment &&
@@ -62,7 +62,7 @@ class LinkAttachment extends React.Component {
             availableThumbnails={link.availableThumbnails}
             visibleNotifications={visibleNotifications}
             service={service}
-            fileUploadProgress={fileUploadProgress}
+            filesUploadProgress={filesUploadProgress}
           />}
 
         <span className={styles.linkDetailsContainer}>

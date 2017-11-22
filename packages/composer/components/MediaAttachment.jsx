@@ -22,7 +22,7 @@ class MediaAttachment extends React.Component {
     gif: PropTypes.object,
     tempImage: PropTypes.string,
     maxAttachableImagesCount: PropTypes.number.isRequired,
-    fileUploadProgress: PropTypes.number,
+    filesUploadProgress: PropTypes.instanceOf(Map),
     service: PropTypes.object,
     visibleNotifications: PropTypes.array.isRequired,
     className: PropTypes.string,
@@ -54,8 +54,8 @@ class MediaAttachment extends React.Component {
 
   render() {
     const {
-      images, video, gif, tempImage, draftId, maxAttachableImagesCount,
-      fileUploadProgress, service, className, usesImageFirstLayout, composerPosition, draft,
+      images, video, gif, tempImage, draftId, showTwitterImageDescription, maxAttachableImagesCount,
+      filesUploadProgress, service, className, usesImageFirstLayout, composerPosition, draft,
     } = this.props;
 
     const shouldDisplayUploadNewButton = (
@@ -64,12 +64,14 @@ class MediaAttachment extends React.Component {
       gif === null
     );
 
-    const isUploadInProgress = fileUploadProgress !== null;
+    const areUploadsInProgress = filesUploadProgress.size > 0;
+    const totalUploadsProgress = areUploadsInProgress &&
+      Array.from(filesUploadProgress.values()).reduce((a, b) => a + b) / filesUploadProgress.size;
 
     const uploadNewButtonTooltipCopy = 'Upload image or video';
 
     const uploadNewButtonUIClassName = [
-      isUploadInProgress ? styles.uploadNewButtonUIIsUploading :
+      areUploadsInProgress ? styles.uploadNewButtonUIIsUploading :
       tempImage ? styles.uploadNewButtonUIWithTempImage : styles.uploadNewButtonUI,
       usesImageFirstLayout ? styles.imageFirstUploadButtonUI : '',
       'bi bi-add-media',
@@ -152,7 +154,7 @@ class MediaAttachment extends React.Component {
 
         {shouldDisplayUploadNewButton &&
           <div className={uploadNewButtonUIClassName} data-tip={uploadNewButtonTooltipCopy}>
-            {tempImage && !isUploadInProgress &&
+            {tempImage && !areUploadsInProgress &&
               <div className={styles.tempImageContainer}>
                 <img alt="" src={tempImage} className={styles.tempImage} />
               </div>}
@@ -166,8 +168,11 @@ class MediaAttachment extends React.Component {
               uploadType={UploadTypes.MEDIA}
             />
 
-            {isUploadInProgress &&
-              <CircularUploadIndicator size={54} progress={fileUploadProgress} showText />}
+            {areUploadsInProgress &&
+              <CircularUploadIndicator size={54} progress={totalUploadsProgress} showText />}
+
+            {areUploadsInProgress && filesUploadProgress.size > 1 &&
+              <span className={styles.activeUploadsCount}>{filesUploadProgress.size}</span>}
           </div>}
       </div>
 

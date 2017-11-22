@@ -16,7 +16,7 @@ import Button from '../components/Button';
 import styles from './css/UploadZone.css';
 import { getHumanReadableSize } from '../utils/StringUtils';
 import NotificationActionCreators from '../action-creators/NotificationActionCreators';
-import { NotificationScopes } from '../AppConstants';
+import { NotificationScopes, UploadTypes } from '../AppConstants';
 
 class UploadZone extends React.Component {
   static propTypes = {
@@ -29,7 +29,7 @@ class UploadZone extends React.Component {
     uploadFormatsConfig: PropTypes.object,
     disabled: PropTypes.bool,
     visibleNotifications: PropTypes.array.isRequired,
-    uploadType: PropTypes.string,
+    uploadType: PropTypes.oneOf(Object.keys(UploadTypes)).isRequired,
   };
 
   static defaultProps = {
@@ -42,32 +42,25 @@ class UploadZone extends React.Component {
     this.dropzone.open();
   };
 
-  uploadFile = (file) => {
+  onDrop = (files) => {
+    this.cleanUpNotifications();
+    if (files.length === 0) return;
+
+    this.uploadFiles(files);
+  }
+
+  uploadFiles = (files) => {
     const { draftId } = this.props;
 
-    if (!this.isNewFileUploadable(file)) return;
-    ComposerActionCreators.uploadDraftFile(draftId, file, this.props.uploadType);
+    files.forEach((file) => {
+      if (this.isNewFileUploadable(file)) {
+        ComposerActionCreators.uploadDraftFile(draftId, file, this.props.uploadType);
+      }
+    });
   }
 
   cleanUpNotifications = () =>
     NotificationActionCreators.removeNotificatonsByScope(NotificationScopes.FILE_UPLOAD);
-
-  onDrop = (acceptedFiles) => {
-    this.cleanUpNotifications();
-
-    if (acceptedFiles.length === 0) return;
-
-    this.uploadFile(acceptedFiles[0]);
-  }
-
-  onNewFileSelected = (e) => {
-    this.cleanUpNotifications();
-
-    const files = e.target.files;
-    if (files.length === 0) return;
-
-    this.uploadFile(files.item(0));
-  };
 
   isNewFileUploadable = (file) => {
     const { uploadFormatsConfig } = this.props;
@@ -102,17 +95,17 @@ class UploadZone extends React.Component {
     const transparentClickZoneClassName =
       [styles.transparentClickZone, this.props.classNames.uploadZone].join(' ');
 
-    const acceptedFileExtensions = Array.from(this.props.uploadFormatsConfig.keys())
-                                  .map((format) => `.${format.toLowerCase()}`)
-                                  .join();
+      const acceptedFileExtensions =
+        Array.from(this.props.uploadFormatsConfig.keys())
+          .map((format) => `.${format.toLowerCase()}`)
+          .join();
 
     return (
       <div>
         <Dropzone
+          onDrop={this.onDrop}
           activeClassName={this.props.classNames.uploadZoneActive}
           className={transparentClickZoneClassName}
-          onDrop={this.onDrop}
-          multiple={false}
           ref={(node) => { this.dropzone = node; }}
         />
         <Button

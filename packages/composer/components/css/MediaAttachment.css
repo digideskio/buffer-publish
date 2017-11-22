@@ -195,3 +195,19 @@
   left: 0;
   bottom: 0;
 }
+
+.activeUploadsCount {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--blue-color-primary-hue);
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 13px;
+  text-align: center;
+  text-indent: 1px;
+}

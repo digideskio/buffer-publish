@@ -11,11 +11,13 @@ class MediaAttachmentEditor extends React.Component {
   static propTypes = {
     draft: PropTypes.object.isRequired,
     onMouseOut: PropTypes.func,
+    onSubmit: PropTypes.func,
     className: PropTypes.string,
   };
 
   static defaultProps = {
     onMouseOut: () => {},
+    onSubmit: () => {},
     className: '',
   };
 
@@ -45,7 +47,7 @@ class MediaAttachmentEditor extends React.Component {
   };
 
   render() {
-    const { draft, onMouseOut, className } = this.props;
+    const { draft, onMouseOut, onSubmit, className } = this.props;
     const { attachedMediaEditingPayload: video } = draft;
 
     return (
@@ -83,6 +85,7 @@ class MediaAttachmentEditor extends React.Component {
             ))}
           </ImagesLoadEvents>
         </div>
+        <Button onClick={onSubmit} className={styles.submitButton}>Done</Button>
       </div>
     );
   }

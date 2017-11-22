@@ -123,7 +123,7 @@ class MediaAttachment extends React.Component {
             />
             <DropdownContent>
               {draft.attachedMediaEditingPayload !== null &&
-                <MediaAttachmentEditor draft={draft} />}
+                <MediaAttachmentEditor draft={draft} onSubmit={this.collapseAttachedMediaEditor} />}
             </DropdownContent>
           </Dropdown>
         )}

@@ -78,9 +78,9 @@
 .scrollContainer {
   position: relative;
   margin-top: -7px;
-  margin-bottom: -34px;
+  margin-bottom: -74px;
   padding-top: 5px;
-  padding-bottom: 30px;
+  padding-bottom: 70px;
   white-space: nowrap;
   overflow-x: scroll;
   overflow-y: hidden;
@@ -143,4 +143,12 @@
   position: relative;
   height: 100%;
   border-radius: var(--thumbnail-border-radius);
+}
+
+.submitButton {
+  composes: button from './Button.css';
+
+  position: relative; /* Position slightly higher in the stacking context by making positioned */
+  display: block;
+  margin: 8px auto 0;
 }

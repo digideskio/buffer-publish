@@ -905,6 +905,13 @@ const updateDraftVideoThumbnail = monitorComposerLastInteractedWith(
   }
 );
 
+const updateDraftVideoTitle = monitorComposerLastInteractedWith(
+  (id, title) => {
+    const draft = ComposerStore.getDraft(id);
+    draft.video.name = title;
+  }
+);
+
 const selectNextLinkThumbnail = monitorComposerLastInteractedWith(
   (draftId) => {
     const draft = ComposerStore.getDraft(draftId);
@@ -1526,6 +1533,10 @@ const onDispatchedPayload = function(payload) {
 
     case ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_THUMBNAIL:
       updateDraftVideoThumbnail(action.id, action.thumbnail);
+      break;
+
+    case ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_TITLE:
+      updateDraftVideoTitle(action.id, action.title);
       break;
 
     case ActionTypes.COMPOSER_ADD_DRAFTS_IMAGE:

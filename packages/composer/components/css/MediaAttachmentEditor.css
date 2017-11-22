@@ -5,7 +5,7 @@
   update-attachment-bg-color: update-attachment-bg-color;
   composer-heading-color: composer-heading-color;
   outerspace: outerspace;
-  geyser: geyser;
+  medium-grey-color: medium-grey-color;
   primary-bg-color: primary-bg-color;
   video-attachment-thumbnail-selector-zindex: video-attachment-thumbnail-selector-zindex;
 }
@@ -17,13 +17,11 @@
   --box-bg-color: update-attachment-bg-color;
   --composer-heading-color: composer-heading-color;
   --outerspace: outerspace;
-  --geyser: geyser;
+  --medium-grey-color: medium-grey-color;
   --primary-bg-color: primary-bg-color;
   --video-attachment-thumbnail-selector-zindex: video-attachment-thumbnail-selector-zindex;
 
   --box-padding: 10px;
-
-  --header-height: 23px;
 
   --thumbnail-height: 80px;
   --thumbnail-shadow-width: 2px;
@@ -36,14 +34,13 @@
   bottom: 100%;
   width: 577px;
   z-index: var(--video-attachment-thumbnail-selector-zindex);
-  height: calc(var(--thumbnail-height) + var(--thumbnail-shadow-width) * 2 + var(--header-height));
   margin: 0 calc(var(--thumbnail-shadow-width)/2) -var(--thumbnail-shadow-width) -var(--thumbnail-shadow-width);
   padding: 8px;
   background-color: var(--primary-bg-color);
   overflow: hidden;
   border-radius: 3px;
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #CED7DF;
+  border: 1px solid var(--medium-grey-color);
 
   counter-reset: suggested-thumbnail;
 }
@@ -58,7 +55,8 @@
 }
 
 .header {
-  height: var(--header-height);
+  display: block;
+  height: 19px;
   margin: 0 4px 4px;
   line-height: 19px;
   font-size: 12px;
@@ -66,9 +64,21 @@
   color: #343e47;
 }
 
+.input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 30px;
+  margin-bottom: 8px;
+  padding: 0 8px;
+  border: 1px solid var(--medium-grey-color);
+  border-radius: 3px;
+}
+
 .scrollContainer {
   position: relative;
-  margin-top: -5px;
+  margin-top: -7px;
+  margin-bottom: -34px;
   padding-top: 5px;
   padding-bottom: 30px;
   white-space: nowrap;

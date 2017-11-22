@@ -2,10 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ComposerActionCreators from '../action-creators/ComposerActionCreators';
 import Button from '../components/Button';
-import styles from './css/VideoThumbnailPicker.css';
+import Input from '../components/Input';
+import styles from './css/MediaAttachmentEditor.css';
 
 const onSuggestedThumbnailClick = (draft, thumbnail) => {
   ComposerActionCreators.updateDraftVideoThumbnail(draft.id, thumbnail);
+};
+
+const onTitleChange = (draft, e) => {
+  ComposerActionCreators.updateDraftVideoTitle(draft.id, e.target.value);
 };
 
 const onThumbnailMouseOver = (draft, thumbnail) => {
@@ -16,12 +21,20 @@ const onThumbnailMouseOut = (draft) => {
   ComposerActionCreators.removeDraftTempImage(draft.id);
 };
 
-const VideoThumbnailPicker = ({ draft, onMouseOut, className }) => {
+const MediaAttachmentEditor = ({ draft, onMouseOut, className }) => {
   const { attachedMediaEditingPayload: video } = draft;
 
   return (
     <div className={`${styles.container} ${className}`} onMouseOut={onMouseOut}>
-      <p className={styles.header}>Pick another thumbnail:</p>
+      <label className={styles.header} htmlFor="video-title-input">Title:</label>
+      <Input
+        type="text"
+        value={video.name}
+        onChange={onTitleChange.bind(this, draft)}
+        id="video-title-input"
+        className={styles.input}
+      />
+      <p className={styles.header}>Thumbnail:</p>
       <div className={styles.scrollContainer}>
         {video.availableThumbnails.map((thumbnail) => (
           <Button
@@ -40,15 +53,15 @@ const VideoThumbnailPicker = ({ draft, onMouseOut, className }) => {
   );
 };
 
-VideoThumbnailPicker.propTypes = {
+MediaAttachmentEditor.propTypes = {
   draft: PropTypes.object.isRequired,
   onMouseOut: PropTypes.func,
   className: PropTypes.string,
 };
 
-VideoThumbnailPicker.defaultProps = {
+MediaAttachmentEditor.defaultProps = {
   onMouseOut: () => {},
   className: '',
 };
 
-export default VideoThumbnailPicker;
+export default MediaAttachmentEditor;

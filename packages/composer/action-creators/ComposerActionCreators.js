@@ -363,6 +363,14 @@ const ComposerActionCreators = {
     });
   },
 
+  updateDraftVideoTitle: (id, title) => {
+    AppDispatcher.handleViewAction({
+      actionType: ActionTypes.COMPOSER_UPDATE_DRAFT_VIDEO_TITLE,
+      id,
+      title,
+    });
+  },
+
   draftVideoAdded: (id, video) => {
     AppDispatcher.handleViewAction({
       actionType: ActionTypes.COMPOSER_DRAFT_VIDEO_ADDED,

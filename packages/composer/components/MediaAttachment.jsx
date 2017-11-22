@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { FileUploadFormatsConfigs, MediaTypes, UploadTypes } from '../AppConstants';
 import ComposerActionCreators from '../action-creators/ComposerActionCreators';
 import MediaAttachmentThumbnail from '../components/MediaAttachmentThumbnail';
-import VideoThumbnailPicker from '../components/VideoThumbnailPicker';
+import MediaAttachmentEditor from '../components/MediaAttachmentEditor';
 import UploadZone from '../components/UploadZone';
 import CircularUploadIndicator from '../components/progress-indicators/CircularUploadIndicator';
 import Dropdown, { DropdownTrigger, DropdownContent } from '../components/Dropdown';
@@ -123,7 +123,7 @@ class MediaAttachment extends React.Component {
             />
             <DropdownContent>
               {draft.attachedMediaEditingPayload !== null &&
-                <VideoThumbnailPicker draft={draft} />}
+                <MediaAttachmentEditor draft={draft} />}
             </DropdownContent>
           </Dropdown>
         )}

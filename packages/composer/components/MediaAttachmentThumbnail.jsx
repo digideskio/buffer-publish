@@ -16,10 +16,12 @@ class MediaAttachmentThumbnail extends React.Component {
     media: PropTypes.object.isRequired,
     showTwitterImageDescription: PropTypes.bool.isRequired,
     composerPosition: PropTypes.object,
+    canEditVideoAttachment: React.PropTypes.bool,
   };
 
   static defaultProps = {
     composerPosition: null,
+    canEditVideoAttachment: null,
   };
 
   onClick = () => {
@@ -58,13 +60,15 @@ class MediaAttachmentThumbnail extends React.Component {
   };
 
   render() {
-    const { media, className, showTwitterImageDescription } = this.props;
+    const { media, className, showTwitterImageDescription, canEditVideoAttachment } = this.props;
     const thumbnailClassName = [styles.thumbnail, className].join(' ');
     const isVideo = media.mediaType === MediaTypes.VIDEO;
     const isRegularImage = media.mediaType === MediaTypes.IMAGE;
     const thumbnail = isVideo ? media.thumbnail : media.url;
 
-    const videoThumbnailClass = `${styles.videoThumbnail} bi bi-video`;
+    const videoThumbnailClass = canEditVideoAttachment ?
+      `${styles.editableVideoThumbnail} bi bi-video` :
+      `${styles.videoThumbnail} bi bi-video`;
     const tooltipCopy = (isRegularImage && showTwitterImageDescription) ?
       'Click to expand & add description' : 'Click to expand';
     const ariaLabel = (isRegularImage && showTwitterImageDescription) ?

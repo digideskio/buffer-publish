@@ -74,6 +74,7 @@ const Services = (() => {
         canHaveSourceUrl: false,
         requiresText: false,
         canEditLinkAttachment: false,
+        canEditVideoAttachment: false,
         usesImageFirstLayout: false,
         isOmni: false,
       };
@@ -112,6 +113,7 @@ const Services = (() => {
       isOmni: true,
       maxAttachableImagesCount: 4,
       canEditLinkAttachment: true,
+      canEditVideoAttachment: true,
     }),
     new Service({
       name: 'twitter',
@@ -122,6 +124,7 @@ const Services = (() => {
       profileType: ProfileTypes.ACCOUNT,
       nativeVideoSizeLimit: 512 * 1024 * 1024, // 512MB
       nativeVideoDurationLimit: 140, // 140s
+      canEditVideoAttachment: true,
     }),
     new Service({
       name: 'facebook',
@@ -131,6 +134,7 @@ const Services = (() => {
       doesRequireHumanInteractionToUpdateText: true,
       profileType: ProfileTypes.ACCOUNT,
       canEditLinkAttachment: true,
+      canEditVideoAttachment: true,
     }),
     new Service({
       name: 'instagram',
@@ -150,6 +154,7 @@ const Services = (() => {
       unavailableMediaAttachmentTypes: [MediaTypes.GIF],
       profileType: ProfileTypes.ACCOUNT,
       canEditLinkAttachment: true,
+      canEditVideoAttachment: true,
     }),
     new Service({
       name: 'pinterest',
@@ -162,6 +167,7 @@ const Services = (() => {
       canHaveSourceUrl: true,
       requiresText: true,
       usesImageFirstLayout: true,
+      canEditVideoAttachment: true,
     }),
     new Service({
       name: 'google',

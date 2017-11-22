@@ -99,7 +99,7 @@ class MediaAttachment extends React.Component {
     return (
       <div className={mediaAttachmentClassNames}>
         {this.hasImagesAttached() &&
-          images.map((image) =>
+          images.map((image) => (
             <MediaAttachmentThumbnail
               draftId={draftId}
               className={thumbnailClassName}
@@ -107,9 +107,10 @@ class MediaAttachment extends React.Component {
               media={image}
               showTwitterImageDescription={showTwitterImageDescription}
               composerPosition={composerPosition}
-            />)}
+            />
+          ))}
 
-        {this.hasVideoAttached() && (
+        {this.hasVideoAttached() && draft.service.canEditVideoAttachment && (
           <Dropdown
             isDropdownExpanded={draft.attachedMediaEditingPayload !== null}
             onHide={this.collapseAttachedMediaEditor}
@@ -136,6 +137,7 @@ class MediaAttachment extends React.Component {
             media={video}
             showTwitterImageDescription={showTwitterImageDescription}
             composerPosition={composerPosition}
+            canEditVideoAttachment={draft.service.canEditVideoAttachment}
           />}
 
         {this.hasGifAttached() &&

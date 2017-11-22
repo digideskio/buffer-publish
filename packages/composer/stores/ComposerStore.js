@@ -110,7 +110,7 @@ const getNewVideo =
   ({ uploadId = null, name, duration, durationMs, size, width, height, url, originalUrl,
     thumbnail, availableThumbnails }) =>
   ({ uploadId, name, duration, durationMs, size, width, height, url, originalUrl,
-    thumbnail, availableThumbnails, mediaType: MediaTypes.VIDEO });
+    thumbnail, availableThumbnails, mediaType: MediaTypes.VIDEO, wasEdited: false });
 
 // Retweet factory
 const getNewRetweet = ({ text, tweetId, userId, userName, userDisplayName, tweetUrl, avatarUrl }) =>
@@ -887,6 +887,26 @@ const addDraftImage = monitorComposerLastInteractedWith(
   }
 );
 
+const updateDraftVideoThumbnail = monitorComposerLastInteractedWith(
+  (id, thumbnail) => {
+    const draft = ComposerStore.getDraft(id);
+    if (!draft.service.canEditVideoAttachment) return;
+
+    draft.video.thumbnail = thumbnail;
+    draft.video.wasEdited = true;
+  }
+);
+
+const updateDraftVideoTitle = monitorComposerLastInteractedWith(
+  (id, title) => {
+    const draft = ComposerStore.getDraft(id);
+    if (!draft.service.canEditVideoAttachment) return;
+
+    draft.video.name = title;
+    draft.video.wasEdited = true;
+  }
+);
+
 const updateDraftLinkThumbnail = monitorComposerLastInteractedWith(
   (id, thumbnail) => {
     const draft = ComposerStore.getDraft(id);
@@ -895,20 +915,6 @@ const updateDraftLinkThumbnail = monitorComposerLastInteractedWith(
 
     // TODO: merge updateDraftLinkThumbnail() into updateDraftLinkData()
     draft.link.wasEdited = true;
-  }
-);
-
-const updateDraftVideoThumbnail = monitorComposerLastInteractedWith(
-  (id, thumbnail) => {
-    const draft = ComposerStore.getDraft(id);
-    draft.video.thumbnail = thumbnail;
-  }
-);
-
-const updateDraftVideoTitle = monitorComposerLastInteractedWith(
-  (id, title) => {
-    const draft = ComposerStore.getDraft(id);
-    draft.video.name = title;
   }
 );
 
@@ -1423,6 +1429,15 @@ const copyDraftContents = ({
             const message = `${draft.service.formattedName} doesn't allow image attachments, so we removed the images for you!`;
             addOmniNotice(message, draft.id);
             return;
+          }
+
+          if (
+            draftFrom.video !== null &&
+            draftFrom.video.wasEdited &&
+            !service.canEditVideoAttachment
+          ) {
+            const message = `${draft.service.formattedName} doesn't allow to customize video thumbnails or titles, so the video might appear a bit differently once posted.`;
+            addOmniNotice(message, draft.id);
           }
 
           copyDraftMedia(draftFrom, draft);

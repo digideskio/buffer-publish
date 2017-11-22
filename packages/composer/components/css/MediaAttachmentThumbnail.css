@@ -112,6 +112,11 @@
 
 .videoThumbnail {
   composes: thumbnailFooterItem;
+  left: 4px;
+}
+
+.editableVideoThumbnail {
+  composes: videoThumbnail;
 
   left: 27px;
   border-top-left-radius: 0;

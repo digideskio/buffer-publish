@@ -9,7 +9,7 @@ import WebAPIUtils from '../utils/WebAPIUtils';
 import ComposerStore from '../stores/ComposerStore';
 import ComposerActionCreators from './ComposerActionCreators';
 import AppStore from '../stores/AppStore';
-import AppHooks from '../utils/lifecycle-hooks';
+import AppHooks from '../utils/LifecycleHooks';
 import Metrics from '../utils/Metrics';
 import WebSocket from '../utils/WebSocket';
 import ModalActionCreators from '../__legacy-buffer-web-shared-components__/modal/actionCreators';

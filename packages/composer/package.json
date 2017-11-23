@@ -36,6 +36,7 @@
     "@bufferapp/draft-js-plugins-editor": "2.0.0-rc8.1",
     "@bufferapp/dragme": "0.2.2",
     "decorate-component-with-props": "1.0.2",
+    "event-pubsub": "4.3.0",
     "events": "1.1.1",
     "fetch-jsonp": "1.0.3",
     "flux": "2.1.1",

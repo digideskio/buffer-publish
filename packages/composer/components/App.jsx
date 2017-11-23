@@ -19,7 +19,7 @@ import NotificationContainer from '../components/NotificationContainer';
 import PowerSchedulerButton from '../components/PowerSchedulerButton';
 import Modals from '../components/Modals';
 import { observeStore } from '../utils/StoreUtils';
-import AppHooks from '../utils/lifecycle-hooks';
+import AppHooks from '../utils/LifecycleHooks';
 
 // App-level styles
 // import '../../../../../node_modules/normalize.css/normalize.css';
